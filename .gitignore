@@ -1,0 +1,19 @@
+# Build output
+target/
+
+# Logs
+*.log
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+# macOS
+.DS_Store
+
+# Project handoff doc (local only)
+Team7_Final_Project_Handoff.txt
+.claude/

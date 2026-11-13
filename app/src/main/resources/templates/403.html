@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Access Denied')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: appHeader(${username}, ${role})}"></header>
+<main>
+  <div class="card narrow" style="margin-top:2rem">
+    <div class="alert danger" role="alert">
+      <span class="lbl">403 Access Denied:</span>
+      You do not have permission to view this page.
+    </div>
+    <p>This area is restricted to Caseworkers. Please <a th:href="@{/home}">return home</a>.</p>
+  </div>
+</main>
+<div th:replace="~{fragments/layout :: badge}"></div>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Home')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: appHeader(${username}, ${role})}"></header>
+<main style="max-width:1200px;margin:0 auto;padding:1.5rem 1.25rem 5rem">
+  <h1 th:text="'Welcome, ' + ${displayName}">Welcome</h1>
+  <p class="small" th:text="${username} + ' · ' + ${role}">username · Role</p>
+  <div class="card" style="margin-top:1rem">
+    <h2 style="margin:0 0 .75rem">Stage 2 – Database ready</h2>
+    <p>Authentication now uses the H2 database. Sample data is loaded.</p>
+    <ul>
+      <li><strong>UC-1</strong> Login &amp; role-based access ✓</li>
+      <li><strong>UC-2</strong> Manage Placement — coming next</li>
+      <li><strong>UC-5</strong> Monitor Compliance / Alerts — coming next</li>
+    </ul>
+    <p style="margin-top:.75rem">
+      <a href="/h2-console" target="_blank">Open H2 Console</a>
+      (JDBC URL: <code>jdbc:h2:mem:fostercare</code>, User: <code>sa</code>, Password: empty)
+    </p>
+  </div>
+</main>
+<div th:replace="~{fragments/layout :: badge}"></div>
+</body>
+</html>

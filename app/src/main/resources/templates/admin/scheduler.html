@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Nightly Deadline Check')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: appHeader(${username}, ${role})}"></header>
+<main>
+
+  <div class="crumbs">Compliance &rsaquo; Scheduler runs</div>
+  <h1>Nightly deadline check</h1>
+
+  <!-- Flash: run just completed -->
+  <div th:if="${runMsg}" class="alert ok" role="status">
+    <span class="lbl">Done:</span>
+    <span th:text="${runMsg}"></span>
+  </div>
+
+  <!-- Summary card -->
+  <div class="card">
+    <div class="row spread">
+      <div>
+        <div class="small"><code class="m">ComplianceScheduler.checkDeadlines()</code> &middot; runs every night at 12:00 a.m. CT</div>
+        <div th:if="${hasRun}"
+             style="font-size:1.1rem;font-weight:700;color:var(--teal-dark)"
+             th:text="'Last run ' + ${#temporals.format(result.ranAt, 'M/d/yyyy h:mm a')} + ' CT – '
+                       + ${result.alertsSent} + ' alerts sent, '
+                       + ${result.overdueCount} + ' items flagged overdue'">
+        </div>
+        <div th:if="${!hasRun}" class="small">Not run yet this session. Click "Run check now" to start.</div>
+      </div>
+      <span th:if="${hasRun}" class="tag ok">Run completed</span>
+      <span th:if="${!hasRun}" class="tag neutral">Not run</span>
+    </div>
+  </div>
+
+  <!-- Stat cards (only after a run) -->
+  <div th:if="${hasRun}" class="stats">
+    <div class="stat">
+      <div class="k">Deadlines checked</div>
+      <div class="n" th:text="${result.totalChecked}">0</div>
+      <span class="tag neutral">Open + met</span>
+    </div>
+    <div class="stat">
+      <div class="k">Alerts sent</div>
+      <div class="n" th:text="${result.alertsSent}">0</div>
+      <span class="tag info">In-system only</span>
+    </div>
+    <div class="stat">
+      <div class="k">Flagged overdue</div>
+      <div class="n" th:text="${result.overdueCount}">0</div>
+      <span class="tag danger">Overdue</span>
+    </div>
+    <div class="stat">
+      <div class="k">No alert</div>
+      <div class="n" th:text="${result.noAlertCount}">0</div>
+      <span class="tag neutral">Not 7/1/0 days or met</span>
+    </div>
+  </div>
+
+  <!-- Deadlines table (only after a run) -->
+  <div th:if="${hasRun}" class="card">
+    <h2>Deadlines checked</h2>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Deadline</th><th>Case</th><th>Assigned to</th>
+            <th>Due</th><th>Days remaining</th><th>Result</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="r : ${result.details}">
+            <td th:text="${r.deadline.description}">Desc</td>
+            <td th:text="${r.deadline.caseRecord.id}">C-XXXX</td>
+            <td th:text="${r.deadline.assignedTo.shortName}">Name</td>
+            <td th:text="${#temporals.format(r.deadline.dueDate, 'M/d')}">Date</td>
+            <td th:if="${r.deadline.met}"
+                th:text="${r.deadline.metDate != null ? 'Met on ' + #temporals.format(r.deadline.metDate,'M/d') : 'Met'}">Met</td>
+            <td th:unless="${r.deadline.met}"
+                th:text="${r.deadline.daysRemaining() + ' day' + (r.deadline.daysRemaining() == 1 || r.deadline.daysRemaining() == -1 ? '' : 's')}">0</td>
+            <td><span class="tag" th:classappend="${r.outcomeClass}" th:text="${r.outcome}">Result</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Alert rules -->
+  <div class="card">
+    <h2>Alert rules</h2>
+    <ul class="rules">
+      <li>An alert is sent only when <code class="m">Deadline.daysRemaining</code> is <strong>7, 1, or 0</strong>. No alert on any other day.</li>
+      <li>Deadlines already met produce no alert.</li>
+      <li>Past-due deadlines (<code class="m">Deadline.isOverdue</code>) are flagged <strong>"Overdue"</strong> instead of getting a reminder.</li>
+      <li>Alerts are shown inside the system only (<code class="m">Alert.send()</code>). No email or push notifications.</li>
+    </ul>
+  </div>
+
+  <!-- Run now button -->
+  <form method="post" th:action="@{/admin/run-check}">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    <button type="submit" class="btn">Run check now</button>
+  </form>
+
+  <a class="btn secondary" th:href="@{/caseworker/home}" style="margin-left:.5rem" th:if="${#authorization.expression('hasRole(''CASEWORKER'')')}">View caseworker alerts</a>
+
+</main>
+<div th:replace="~{fragments/layout :: badge}"></div>
+</body>
+</html>

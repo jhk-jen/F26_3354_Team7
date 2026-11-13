@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Case Timeline')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: appHeader(${username}, ${role})}"></header>
+<main>
+
+  <div class="crumbs">
+    <a th:href="@{/caseworker/home}">My cases</a>
+    &rsaquo; <a th:href="@{/caseworker/cases/{id}(id=${caseRecord.id})}"
+                th:text="${caseRecord.id}">C-XXXX</a>
+    &rsaquo; Timeline
+  </div>
+
+  <!-- Flash: Placement saved successfully -->
+  <div th:if="${savedMsg}" class="alert ok" role="status">
+    <span class="lbl">Success:</span>
+    <span th:text="${savedMsg}"></span>
+  </div>
+
+  <!-- Case header -->
+  <div class="card case-head">
+    <div class="row spread">
+      <h1 style="margin:0"
+          th:text="'Case ' + ${caseRecord.id} + ' · ' + ${caseRecord.child.name}">Case</h1>
+      <span class="tag info">Status: <span th:text="${caseRecord.status}">Open</span></span>
+    </div>
+    <dl>
+      <div><dt>Case ID</dt>          <dd th:text="${caseRecord.id}">C-XXXX</dd></div>
+      <div><dt>Child</dt>            <dd th:text="${caseRecord.child.name + ' (ID ' + caseRecord.child.childId + ')'}">Child</dd></div>
+      <div><dt>Current placement</dt>
+           <dd th:if="${currentPlacement != null}"
+               th:text="${currentPlacement.fosterHome.name + ' – since ' + #temporals.format(currentPlacement.startDate, 'M/d/yyyy')}">
+             Home
+           </dd>
+           <dd th:if="${currentPlacement == null}">No active placement</dd>
+      </div>
+      <div><dt>Assigned caseworker</dt>
+           <dd th:text="${caseRecord.assignedCaseworker.displayName}">Caseworker</dd></div>
+    </dl>
+  </div>
+
+  <!-- Timeline -->
+  <div class="card">
+    <div class="row spread" style="margin-bottom:1rem">
+      <div>
+        <h2 style="margin:0">Case timeline</h2>
+        <div class="small">Newest first · read-only</div>
+      </div>
+      <a href="#" onclick="return false" title="Not available in this build">Export as PDF</a>
+    </div>
+
+    <ol class="timeline" th:if="${!events.isEmpty()}">
+      <li th:each="ev : ${events}">
+        <div class="when"
+             th:text="${#temporals.format(ev.timestamp, 'M/d/yyyy HH:mm') + ' · ' + ev.actor}">
+          Date · Actor
+        </div>
+        <div th:text="${ev.description}">Description</div>
+        <span class="tag info new">Logged automatically</span>
+      </li>
+    </ol>
+
+    <p th:if="${events.isEmpty()}" class="small">No events recorded yet.</p>
+  </div>
+
+  <a class="btn secondary" th:href="@{/caseworker/home}">Back to My cases</a>
+
+</main>
+<div th:replace="~{fragments/layout :: badge}"></div>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('End Placement')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: appHeader(${username}, ${role})}"></header>
+<main>
+
+  <div class="crumbs">
+    <a th:href="@{/caseworker/home}">My cases</a>
+    &rsaquo; <a th:href="@{/caseworker/cases/{id}(id=${caseRecord.id})}"
+                th:text="${caseRecord.id}">C-XXXX</a>
+    &rsaquo; End placement
+  </div>
+
+  <div class="card narrow">
+    <h1>End placement</h1>
+    <p class="small"
+       th:if="${currentPlacement != null}"
+       th:text="${caseRecord.child.name + ' (ID ' + caseRecord.child.childId + ') · '
+                + currentPlacement.fosterHome.name
+                + ' – since ' + #temporals.format(currentPlacement.startDate, 'M/d/yyyy')}">
+      Child · Home
+    </p>
+
+    <!-- Inline validation error -->
+    <div th:if="${reasonError}" class="alert danger" role="alert">
+      <span class="lbl">Error:</span>
+      <span th:text="${reasonError}"></span>
+    </div>
+
+    <form th:action="@{/caseworker/cases/{id}/end-placement(id=${caseRecord.id})}"
+          method="post">
+
+      <div class="field">
+        <label for="endDate">End date <span class="req">*</span></label>
+        <input class="input" id="endDate" type="text"
+               th:value="${endDate}" readonly>
+      </div>
+
+      <div class="field">
+        <label for="reason">Reason for placement change <span class="req">*</span></label>
+        <textarea class="input"
+                  th:classappend="${reasonError != null ? ' invalid' : ''}"
+                  id="reason" name="reason"
+                  th:attr="aria-invalid=${reasonError != null ? 'true' : null},
+                           aria-describedby=${reasonError != null ? 'reasonErr' : null}"
+                  th:text="${reason}"></textarea>
+        <div th:if="${reasonError}" class="err" id="reasonErr" th:text="${reasonError}"></div>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn">Confirm end of placement</button>
+        <a class="btn secondary"
+           th:href="@{/caseworker/cases/{id}(id=${caseRecord.id})}">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+</main>
+<div th:replace="~{fragments/layout :: badge}"></div>
+</body>
+</html>

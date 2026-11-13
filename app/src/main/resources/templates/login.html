@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Sign In')}"></head>
+<body style="font-family:'Segoe UI',Arial,sans-serif;background:#F5F8F7">
+<main style="max-width:1200px;margin:0 auto;padding:1.5rem 1.25rem 5rem">
+  <div class="login-wrap">
+    <div class="card login" style="background:#fff;border:1px solid #D9E2E1;border-radius:8px;padding:1.25rem;width:100%;max-width:400px">
+      <div class="logo" style="color:#0F4A4F;font-weight:700;font-size:1.4rem;text-align:center;margin-bottom:.25rem">Foster Care Tracking</div>
+      <div class="sub" style="text-align:center;color:#4F5F60;margin-bottom:1.25rem">Sign in to continue</div>
+
+      <div th:if="${param.error}" class="alert danger" role="alert" style="border-radius:6px;padding:.85rem 1rem;margin-bottom:1rem;border-left:5px solid #B03A2E;background:#FBE6E2;color:#B03A2E;font-weight:600">
+        Invalid username or password.
+      </div>
+      <div th:if="${param.logout}" class="alert ok" role="status" style="border-radius:6px;padding:.85rem 1rem;margin-bottom:1rem;border-left:5px solid #256B42;background:#E4F2E9;color:#256B42;font-weight:600">
+        You have been signed out.
+      </div>
+
+      <form th:action="@{/login}" method="post">
+        <div class="field" style="margin-bottom:1rem">
+          <label for="u" style="display:block;font-weight:600;margin-bottom:.3rem">Username</label>
+          <input class="input" id="u" name="username" type="text" autocomplete="username" placeholder="m.garcia" required
+                 style="width:100%;padding:.6rem .7rem;border:1px solid #8FA3A2;border-radius:6px;font:inherit;color:#1F2D2E;background:#fff">
+        </div>
+        <div class="field" style="margin-bottom:1rem">
+          <label for="p" style="display:block;font-weight:600;margin-bottom:.3rem">Password</label>
+          <input class="input" id="p" name="password" type="password" autocomplete="current-password" required
+                 style="width:100%;padding:.6rem .7rem;border:1px solid #8FA3A2;border-radius:6px;font:inherit;color:#1F2D2E;background:#fff">
+        </div>
+        <button type="submit" style="display:block;width:100%;text-align:center;background:#16656B;color:#fff;border:2px solid #16656B;border-radius:6px;padding:.6rem 1.1rem;font:inherit;font-weight:600;cursor:pointer">Sign in</button>
+      </form>
+
+      <div style="margin-top:1rem;padding:1rem;background:#E3F1EF;border-radius:6px;font-size:.9rem;color:#0F4A4F">
+        <strong>Demo accounts</strong> (password: <code>demo</code>)<br>
+        <ul style="margin:.5rem 0 0;padding-left:1.25rem;line-height:1.8">
+          <li><strong>m.garcia</strong> — Caseworker</li>
+          <li><strong>k.brown</strong> — Supervisor</li>
+          <li><strong>admin</strong> — Administrator</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</main>
+<div class="badge" style="position:fixed;right:12px;bottom:12px;background:#0F4A4F;color:#fff;font-size:.8rem;font-weight:600;padding:.4rem .75rem;border-radius:999px;box-shadow:0 2px 6px rgba(0,0,0,.2);z-index:10">Prototype · synthetic data</div>
+</body>
+</html>

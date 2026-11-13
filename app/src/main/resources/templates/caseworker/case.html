@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Case Detail')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: appHeader(${username}, ${role})}"></header>
+<main>
+
+  <div class="crumbs">
+    <a th:href="@{/caseworker/home}">My cases</a>
+    &rsaquo; <span th:text="${caseRecord.id}">C-XXXX</span>
+  </div>
+
+  <!-- Flash: Placement ended successfully -->
+  <div th:if="${successMsg}" class="alert ok" role="status">
+    <span class="lbl">Success:</span>
+    <span th:text="${successMsg}"></span>
+  </div>
+
+  <!-- Case header -->
+  <div class="card case-head">
+    <div class="row spread">
+      <h1 style="margin:0"
+          th:text="'Case ' + ${caseRecord.id} + ' · ' + ${caseRecord.child.name}">Case</h1>
+      <span class="tag info">Status: <span th:text="${caseRecord.status}">Open</span></span>
+    </div>
+    <dl>
+      <div><dt>Case ID</dt>    <dd th:text="${caseRecord.id}">C-XXXX</dd></div>
+      <div><dt>Child</dt>      <dd th:text="${caseRecord.child.name + ' (ID ' + caseRecord.child.childId + ')'}">Child</dd></div>
+      <div><dt>Status</dt>     <dd th:text="${caseRecord.status}">Open</dd></div>
+      <div><dt>Assigned caseworker</dt>
+           <dd th:text="${caseRecord.assignedCaseworker.displayName}">Caseworker</dd></div>
+    </dl>
+  </div>
+
+  <!-- Current placement -->
+  <div class="card">
+    <h2>Current placement</h2>
+
+    <!-- Active placement -->
+    <div th:if="${currentPlacement != null}">
+      <div class="placement-box">
+        <div>
+          <div class="big"
+               th:text="${currentPlacement.fosterHome.name + ' – since ' + #temporals.format(currentPlacement.startDate, 'M/d/yyyy')}">
+            Home – since date
+          </div>
+          <div class="small"
+               th:text="${currentPlacement.fosterHome.location + ' · Placement ID P-' + currentPlacement.id}">
+            Location
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <a class="btn"
+           th:href="@{/caseworker/cases/{id}/end-placement(id=${caseRecord.id})}">
+          End placement
+        </a>
+        <a class="btn" aria-disabled="true"
+           title="End the current placement first"
+           href="#">New placement</a>
+      </div>
+      <p class="hint">End the current placement before creating a new one.</p>
+    </div>
+
+    <!-- No active placement -->
+    <div th:if="${currentPlacement == null}">
+      <div class="placement-box">
+        <div>
+          <div class="big">No active placement</div>
+          <div class="small" th:if="${successMsg == null}">
+            This case has no current placement.
+          </div>
+        </div>
+        <span class="tag warn">Needs placement</span>
+      </div>
+      <div class="actions">
+        <a class="btn" aria-disabled="true" href="#">End placement</a>
+        <a class="btn"
+           th:href="@{/caseworker/cases/{id}/new-placement(id=${caseRecord.id})}">
+          New placement
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <p><a th:href="@{/caseworker/cases/{id}/timeline(id=${caseRecord.id})}">View case timeline</a></p>
+
+</main>
+<div th:replace="~{fragments/layout :: badge}"></div>
+</body>
+</html>

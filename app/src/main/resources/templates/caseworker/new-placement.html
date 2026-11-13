@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('New Placement')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: appHeader(${username}, ${role})}"></header>
+<main>
+
+  <div class="crumbs">
+    <a th:href="@{/caseworker/home}">My cases</a>
+    &rsaquo; <a th:href="@{/caseworker/cases/{id}(id=${caseRecord.id})}"
+                th:text="${caseRecord.id}">C-XXXX</a>
+    &rsaquo; New placement
+  </div>
+  <h1>New placement – select foster home</h1>
+
+  <!-- Rejection alert (flash) -->
+  <div th:if="${rejectedMsg}" class="alert danger" role="alert">
+    <span class="lbl">Rejected:</span>
+    <span th:text="${rejectedMsg}"></span>
+  </div>
+
+  <!-- Child + start date pre-fill -->
+  <div class="card">
+    <div class="row" style="align-items:flex-start">
+      <div class="field" style="flex:1 1 220px;margin:0">
+        <label>Child</label>
+        <input class="input"
+               th:value="${caseRecord.child.name + ' (ID ' + caseRecord.child.childId + ')'}"
+               readonly>
+      </div>
+      <div class="field" style="flex:1 1 220px;margin:0">
+        <label>Start date</label>
+        <input class="input" th:value="${startDate}" readonly>
+      </div>
+    </div>
+  </div>
+
+  <h2>Foster homes</h2>
+  <p class="small">Select a home. Capacity is checked before the placement is saved.</p>
+
+  <!--
+    One form wraps all home cards.
+    Each <button type="submit" name="homeId" value="{id}"> submits only its own homeId.
+    Full homes are still clickable — the server rejects them (FR-5).
+  -->
+  <form th:action="@{/caseworker/cases/{id}/new-placement(id=${caseRecord.id})}"
+        method="post">
+    <div class="homes">
+      <button th:each="h : ${homes}"
+              type="submit" name="homeId" th:value="${h.id}"
+              class="home"
+              th:classappend="${rejectedHomeId != null and rejectedHomeId == h.id ? ' selected' : ''}"
+              style="text-align:left;cursor:pointer;font:inherit">
+
+        <div class="row spread">
+          <span class="name" th:text="${h.name}">Home</span>
+          <span>
+            <!-- Show "Selected" badge for the rejected home -->
+            <span th:if="${rejectedHomeId != null and rejectedHomeId == h.id}"
+                  class="tag info" style="color:var(--teal-dark);background:var(--info-bg)">
+              Selected
+            </span>
+            <span th:if="${h.full}" class="tag danger">Full</span>
+            <span th:if="${!h.full}" class="tag ok">Available</span>
+          </span>
+        </div>
+
+        <div class="small" th:text="${h.location}">Location</div>
+
+        <div class="bar" th:classappend="${h.full ? ' full' : ''}"
+             th:attr="role='img',
+                      aria-label=${h.currentOccupancy + ' of ' + h.capacity + ' beds used' + (h.full ? ', full' : '')}">
+          <span th:style="'width:' + ${h.occupancyPercent} + '%'"></span>
+        </div>
+
+        <div class="cap">
+          <span th:text="${h.currentOccupancy + ' of ' + h.capacity + ' beds used'}"></span>
+          <span th:if="${!h.full}" th:text="${h.openBeds + (h.openBeds == 1 ? ' bed open' : ' beds open')}"></span>
+          <span th:if="${h.full}">0 beds open</span>
+        </div>
+      </button>
+    </div>
+  </form>
+
+</main>
+<div th:replace="~{fragments/layout :: badge}"></div>
+</body>
+</html>
