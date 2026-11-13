@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Compliance Dashboard')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: appHeader(${username}, ${role})}"></header>
+<main>
+
+  <div class="row spread" style="align-items:flex-end;margin-bottom:1rem">
+    <div>
+      <h1>Compliance dashboard</h1>
+      <div class="small" th:if="${!filtered}">Visits and deadlines · all caseworkers</div>
+      <div class="small" th:if="${filtered}">
+        Filtered: <span th:text="${filteredCaseworker.displayName}">Name</span>
+        &middot; <code class="m">filterByCaseworker()</code>
+        &middot; <a th:href="@{/supervisor/dashboard}">Clear filter</a>
+      </div>
+    </div>
+    <div class="filter">
+      <label for="cwFilter">Filter:</label>
+      <select class="select" id="cwFilter"
+              onchange="location.href='/supervisor/dashboard' + (this.value ? '?caseworker=' + this.value : '')">
+        <option value="" th:selected="${selectedCaseworker == ''}">All caseworkers</option>
+        <option th:each="cw : ${caseworkers}"
+                th:value="${cw.username}"
+                th:text="${cw.displayName}"
+                th:selected="${selectedCaseworker == cw.username}">Name</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- ── OVERALL VIEW ───────────────────────────────────────────────────────── -->
+  <th:block th:if="${!filtered}">
+
+    <div class="stats">
+      <div class="stat">
+        <div class="k">On track</div>
+        <div class="n" th:text="${stats['onTrackRate'] + '%'}">0%</div>
+        <div class="small" th:text="${stats['onTrackCount'] + ' of ' + stats['totalItems'] + ' items'}">0</div>
+        <span class="tag ok">On track</span>
+      </div>
+      <div class="stat">
+        <div class="k">Overdue</div>
+        <div class="n" th:text="${stats['overdueRate'] + '%'}">0%</div>
+        <div class="small" th:text="${stats['overdueCount'] + ' items'}">0</div>
+        <span class="tag danger">Overdue</span>
+      </div>
+      <div class="stat">
+        <div class="k">Due in 7 days</div>
+        <div class="n" th:text="${stats['dueIn7Days']}">0</div>
+        <div class="small">items</div>
+        <span class="tag info">Upcoming</span>
+      </div>
+      <div class="stat">
+        <div class="k">Missed visits (30 days)</div>
+        <div class="n" th:text="${stats['missedVisits']}">0</div>
+        <div class="small">visits</div>
+        <span class="tag danger">Missed</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>On track vs. overdue</h2>
+      <div class="split"
+           th:attr="aria-label=${stats['onTrackRate'] + ' percent on track, ' + stats['overdueRate'] + ' percent overdue'}"
+           role="img">
+        <span class="a" th:style="${'width:' + stats['onTrackRateRaw'] + '%'}"></span>
+        <span class="b" th:style="${'width:' + stats['overdueRate'] + '%'}"></span>
+      </div>
+      <div class="row small">
+        <span><span class="tag ok">On track</span>
+              <span th:text="${stats['onTrackRate'] + '% (' + stats['onTrackCount'] + ')'}"></span></span>
+        <span><span class="tag danger">Overdue</span>
+              <span th:text="${stats['overdueRate'] + '% (' + stats['overdueCount'] + ')'}"></span></span>
+      </div>
+      <p class="small" style="margin-bottom:0"><code class="m">ComplianceScheduler.calculateOnTrackRate()</code></p>
+    </div>
+
+    <div class="card">
+      <h2>By caseworker</h2>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Caseworker</th><th>Cases</th><th>On-track rate</th><th>Overdue items</th></tr></thead>
+          <tbody>
+            <tr th:each="s : ${cwStats}">
+              <td>
+                <a th:href="@{/supervisor/dashboard(caseworker=${s.caseworker.username})}"
+                   th:text="${s.caseworker.displayName}">Name</a>
+              </td>
+              <td th:text="${s.caseCount}">0</td>
+              <td>
+                <div class="rate">
+                  <div class="bar" th:classappend="${s.rateClass}"
+                       th:attr="aria-label=${s.rateFormatted + ' percent'}" role="img">
+                    <span th:style="${s.barWidthStyle}"></span>
+                  </div>
+                  <strong th:text="${s.rateFormatted + '%'}">0%</strong>
+                  <span class="tag" th:classappend="${s.rateClass}" th:text="${s.rateLabel}">Label</span>
+                </div>
+              </td>
+              <td th:text="${s.overdueCount}">0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="legend">
+        <span class="tag ok">On target: 90% or more</span>
+        <span class="tag warn">Needs attention: 70–89%</span>
+        <span class="tag danger">Below target: under 70%</span>
+      </div>
+    </div>
+  </th:block>
+
+  <!-- ── FILTERED VIEW ─────────────────────────────────────────────────────── -->
+  <th:block th:if="${filtered}">
+
+    <div class="stats">
+      <div class="stat">
+        <div class="k">On track</div>
+        <div class="n" th:text="${onTrackRate + '%'}">0%</div>
+        <div th:if="${cwStat != null}" class="small"
+             th:text="${(cwStat.caseCount * (onTrackRateRaw / 100.0)).intValue() + ' of ' + cwStat.caseCount + ' items (est.)'}">
+        </div>
+        <span class="tag" th:classappend="${onTrackRateClass}" th:text="${onTrackRateLabel}">Label</span>
+      </div>
+      <div class="stat">
+        <div class="k">Overdue items</div>
+        <div class="n" th:text="${overdueCount}">0</div>
+        <div class="small">items</div>
+        <span class="tag danger">Overdue</span>
+      </div>
+      <div class="stat">
+        <div class="k">Cases</div>
+        <div class="n" th:text="${cwStat != null ? cwStat.caseCount : '—'}">0</div>
+        <div class="small">open cases</div>
+        <span class="tag neutral">Assigned</span>
+      </div>
+      <div class="stat">
+        <div class="k">Missed visits (30 days)</div>
+        <div class="n" th:text="${missedVisits}">0</div>
+        <div class="small">visit</div>
+        <span class="tag danger">Missed</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>On-track rate</h2>
+      <div class="rate">
+        <div class="bar" th:classappend="${onTrackRateClass}"
+             th:attr="aria-label=${onTrackRate + ' percent'}"
+             role="img" style="width:100%;max-width:420px">
+          <span th:style="${'width:' + onTrackRateRaw + '%'}"></span>
+        </div>
+        <strong th:text="${onTrackRate + '%'}">0%</strong>
+        <span class="tag" th:classappend="${onTrackRateClass}" th:text="${onTrackRateLabel}">Label</span>
+      </div>
+    </div>
+
+    <div class="card" th:if="${!overdueItems.isEmpty()}">
+      <h2 th:text="'Overdue items (' + ${overdueCount} + ')'">Overdue items</h2>
+      <ul class="alist">
+        <li th:each="item : ${overdueItems}" class="aitem danger">
+          <div>
+            <div class="t" th:text="${item.title}">Title</div>
+            <div class="small" th:text="${item.detail}">Detail</div>
+          </div>
+          <span class="tag danger" th:text="${item.tagLabel}">Tag</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card" th:if="${overdueItems.isEmpty()}">
+      <p class="small">No overdue items for <span th:text="${filteredCaseworker.displayName}">Name</span>.</p>
+    </div>
+
+  </th:block>
+
+</main>
+<div th:replace="~{fragments/layout :: badge}"></div>
+</body>
+</html>

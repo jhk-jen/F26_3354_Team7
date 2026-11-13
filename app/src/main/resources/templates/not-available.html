@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Not Available')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: appHeader(${username}, ${role})}"></header>
+<main>
+
+  <div class="card narrow" style="margin-top:2rem">
+    <div class="alert info" role="note" style="margin-bottom:1rem">
+      <span class="lbl">Note:</span>
+      This section isn't available for the <strong th:text="${role}">Role</strong> role in this demo.
+    </div>
+    <a class="btn secondary" th:href="@{/my-work}">Back to My Work</a>
+  </div>
+
+</main>
+<div th:replace="~{fragments/layout :: badge}"></div>
+</body>
+</html>

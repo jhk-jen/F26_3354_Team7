@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Placements')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: appHeader(${username}, ${role})}"></header>
+<main>
+
+  <h1>Placements</h1>
+  <p class="small">Active placements for your assigned cases</p>
+
+  <div class="card" style="padding:1rem 0">
+    <div class="list-head" style="grid-template-columns:110px 1fr 1fr 1fr auto">
+      <span>Case</span><span>Child</span><span>Foster home</span><span>Since</span><span>Action</span>
+    </div>
+    <ul class="case-list">
+      <li th:each="cv : ${cases}">
+        <div class="case-item" style="grid-template-columns:110px 1fr 1fr 1fr auto">
+          <span class="case-id" th:text="${cv.caseRecord.id}">C-XXXX</span>
+          <span class="c2">
+            <strong th:text="${cv.caseRecord.child.name}">Child</strong>
+            <span class="small" th:text="' · ' + ${cv.caseRecord.child.childId}"></span>
+          </span>
+          <span class="small" th:if="${placements[cv.caseRecord.id] != null}"
+                th:text="${placements[cv.caseRecord.id].fosterHome.name}">Home</span>
+          <span class="small" th:if="${placements[cv.caseRecord.id] == null}"
+                style="color:var(--muted)">No active placement</span>
+          <span class="small" th:if="${placements[cv.caseRecord.id] != null}"
+                th:text="${#temporals.format(placements[cv.caseRecord.id].startDate, 'M/d/yyyy')}">Date</span>
+          <span class="small" th:if="${placements[cv.caseRecord.id] == null}"></span>
+          <a class="btn secondary"
+             style="font-size:.85rem;padding:.35rem .75rem"
+             th:href="@{/caseworker/cases/{id}(id=${cv.caseRecord.id})}">Manage placement</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+</main>
+<div th:replace="~{fragments/layout :: badge}"></div>
+</body>
+</html>

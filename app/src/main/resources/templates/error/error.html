@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Error')}" ></head>
+<body>
+<header class="app-header">
+  <div class="inner">
+    <a class="brand" href="/my-work">Foster Care Tracking</a>
+  </div>
+</header>
+<main>
+
+  <div class="card narrow" style="margin-top:2rem">
+    <h1 th:text="${error ?: 'Something went wrong'}">Error</h1>
+    <p class="small" th:text="'Status: ' + ${status}">Status</p>
+    <p th:text="${message ?: 'An unexpected error occurred. Please try again.'}">Message</p>
+    <div class="actions">
+      <a class="btn" href="/my-work" sec:authorize="isAuthenticated()">Back to My Work</a>
+      <a class="btn" href="/login" sec:authorize="!isAuthenticated()">Go to sign in</a>
+    </div>
+  </div>
+
+</main>
+<div class="badge">Prototype · synthetic data</div>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Compliance')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: appHeader(${username}, ${role})}"></header>
+<main>
+
+  <h1>Compliance</h1>
+  <p class="small" th:text="${#temporals.format(#temporals.createNow(), 'EEEE, M/d/yyyy')}">Today</p>
+
+  <!-- ── Deadline alerts ──────────────────────────────────────────────────── -->
+  <div class="card" th:if="${!alerts.isEmpty() or !overdueDeadlines.isEmpty()}">
+    <div class="row spread">
+      <h2 style="margin:0" th:text="'Deadline alerts (' + ${alerts.size()} + ')'">Deadline alerts</h2>
+      <span class="small">In-system alerts only &middot; no email or push</span>
+    </div>
+    <p th:if="${!alerts.isEmpty()}" class="small" style="margin-top:.25rem">
+      Sent by ComplianceScheduler &middot;
+      <span th:text="${#temporals.format(alerts[0].sentAt, 'M/d/yyyy h:mm a') + ' CT'}"></span>
+    </p>
+
+    <ul class="alist" th:if="${!alerts.isEmpty()}">
+      <li th:each="a : ${alerts}"
+          th:classappend="${a.daysBeforeDue == 0 ? ' danger' : (a.daysBeforeDue == 1 ? ' warn' : ' info')}"
+          class="aitem">
+        <div>
+          <div class="t" th:text="${a.deadline.description + ' – ' + a.deadline.caseRecord.id}">Title</div>
+          <div class="small" th:text="'Due ' + ${#temporals.format(a.deadline.dueDate, 'M/d/yyyy')}">Date</div>
+        </div>
+        <span th:if="${a.daysBeforeDue == 0}" class="tag danger">Due today</span>
+        <span th:if="${a.daysBeforeDue == 1}" class="tag warn">1 day</span>
+        <span th:if="${a.daysBeforeDue == 7}" class="tag info">7 days</span>
+        <span th:if="${a.daysBeforeDue != 0 and a.daysBeforeDue != 1 and a.daysBeforeDue != 7}"
+              class="tag info" th:text="${a.daysBeforeDue + ' days'}">Days</span>
+      </li>
+    </ul>
+
+    <p th:if="${alerts.isEmpty()}" class="small" style="margin:.5rem 0">
+      No alerts yet. The deadline check runs nightly at 12:00 a.m. CT, or an administrator can run it now.
+    </p>
+
+    <!-- Flagged overdue -->
+    <div th:if="${!overdueDeadlines.isEmpty()}" style="margin-top:.75rem">
+      <div class="small" style="margin-bottom:.25rem">Flagged overdue (no reminder sent):</div>
+      <ul class="alist">
+        <li th:each="d : ${overdueDeadlines}" class="aitem danger">
+          <div>
+            <div class="t" th:text="${d.description + ' – ' + d.caseRecord.id}">Title</div>
+            <div class="small" th:text="'Due ' + ${#temporals.format(d.dueDate, 'M/d/yyyy')}">Date</div>
+          </div>
+          <span class="tag danger"
+                th:text="${'Overdue ' + (d.daysRemaining() * -1) + ' day' + (d.daysRemaining() == -1 ? '' : 's')}">
+            Overdue
+          </span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" th:if="${alerts.isEmpty() and overdueDeadlines.isEmpty()}">
+    <p class="small" style="margin:0">
+      No alerts yet. The deadline check runs nightly at 12:00 a.m. CT, or an administrator can run it now.
+    </p>
+  </div>
+
+  <!-- ── My visits ────────────────────────────────────────────────────────── -->
+  <div class="card" th:if="${!visits.isEmpty()}">
+    <h2>My visits</h2>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr><th>Date</th><th>Child</th><th>Case</th><th>Visit</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr th:each="v : ${visits}">
+            <td th:text="${#temporals.format(v.scheduledDate, 'M/d')}">Date</td>
+            <td th:text="${v.caseRecord.child.name}">Child</td>
+            <td th:text="${v.caseRecord.id}">Case</td>
+            <td th:text="${v.visitType}">Type</td>
+            <td>
+              <span th:if="${v.status == 'OVERDUE'}"   class="tag danger">Overdue</span>
+              <span th:if="${v.status == 'MISSED'}"    class="tag danger">Missed</span>
+              <span th:if="${v.status == 'SCHEDULED'}" class="tag info">Scheduled</span>
+              <span th:if="${v.status == 'COMPLETED'}" class="tag ok">Completed</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+<div th:replace="~{fragments/layout :: badge}"></div>
+</body>
+</html>
