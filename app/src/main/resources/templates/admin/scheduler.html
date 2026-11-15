@@ -6,6 +6,7 @@
 <main>
 
   <div class="crumbs">Compliance &rsaquo; Scheduler runs</div>
+  <p class="eyebrow">ADMINISTRATOR &middot; SCHEDULER</p>
   <h1>Nightly deadline check</h1>
 
   <!-- Flash: run just completed -->
@@ -20,7 +21,7 @@
       <div>
         <div class="small"><code class="m">ComplianceScheduler.checkDeadlines()</code> &middot; runs every night at 12:00 a.m. CT</div>
         <div th:if="${hasRun}"
-             style="font-size:1.1rem;font-weight:700;color:var(--teal-dark)"
+             style="font-size:1.1rem;font-weight:700"
              th:text="'Last run ' + ${#temporals.format(result.ranAt, 'M/d/yyyy h:mm a')} + ' CT – '
                        + ${result.alertsSent} + ' alerts sent, '
                        + ${result.overdueCount} + ' items flagged overdue'">

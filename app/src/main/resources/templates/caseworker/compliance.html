@@ -5,6 +5,7 @@
 <header th:replace="~{fragments/layout :: appHeader(${username}, ${role})}"></header>
 <main>
 
+  <p class="eyebrow">CASEWORKER &middot; COMPLIANCE</p>
   <h1>Compliance</h1>
   <p class="small" th:text="${#temporals.format(#temporals.createNow(), 'EEEE, M/d/yyyy')}">Today</p>
 
