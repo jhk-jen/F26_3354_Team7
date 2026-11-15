@@ -168,6 +168,42 @@ class NavControllerTest {
         }
     }
 
+    // ── GET / root redirect ───────────────────────────────────────────────────
+
+    @Nested
+    @DisplayName("GET / root redirect")
+    class RootRedirect {
+
+        @Test @DisplayName("unauthenticated / → redirect to /login")
+        void unauthenticated() throws Exception {
+            // Spring Security intercepts unauthenticated requests and redirects to /login
+            mockMvc.perform(get("/"))
+                   .andExpect(status().is3xxRedirection())
+                   .andExpect(redirectedUrlPattern("**/login"));
+        }
+
+        @Test @DisplayName("caseworker / → redirect to /my-work")
+        void caseworker() throws Exception {
+            mockMvc.perform(get("/").with(user("m.garcia").roles("CASEWORKER")))
+                   .andExpect(status().is3xxRedirection())
+                   .andExpect(redirectedUrl("/my-work"));
+        }
+
+        @Test @DisplayName("supervisor / → redirect to /my-work")
+        void supervisor() throws Exception {
+            mockMvc.perform(get("/").with(user("k.brown").roles("SUPERVISOR")))
+                   .andExpect(status().is3xxRedirection())
+                   .andExpect(redirectedUrl("/my-work"));
+        }
+
+        @Test @DisplayName("administrator / → redirect to /my-work")
+        void administrator() throws Exception {
+            mockMvc.perform(get("/").with(user("admin").roles("ADMINISTRATOR")))
+                   .andExpect(status().is3xxRedirection())
+                   .andExpect(redirectedUrl("/my-work"));
+        }
+    }
+
     // ── Custom error page ─────────────────────────────────────────────────────
 
     @Test
