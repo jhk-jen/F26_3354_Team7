@@ -5,220 +5,671 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Foster Care Tracking – Prototype</title>
   <style>
-    /* ── app CSS extracted from live render ── */
-    
-  :root{
-    --teal:#16656B; --teal-dark:#0F4A4F; --sun:#F2C14E;
-    --bg:#F5F8F7; --card:#FFFFFF; --border:#D9E2E1;
-    --text:#1F2D2E; --muted:#4F5F60;
-    --danger:#B03A2E; --danger-bg:#FBE6E2;
-    --warn:#8A5A00; --warn-bg:#FCEFD6;
-    --info:#16656B; --info-bg:#E3F1EF;
-    --ok:#256B42; --ok-bg:#E4F2E9;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;padding:0}
-  body{font-family:"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.5}
-  a{color:var(--teal)}
-  a:hover{color:var(--teal-dark)}
-  h1,h2,h3{color:var(--teal-dark);margin:0 0 .5rem;line-height:1.25}
-  h1{font-size:1.5rem} h2{font-size:1.2rem} h3{font-size:1.05rem}
-  :focus-visible{outline:3px solid var(--teal-dark);outline-offset:2px}
+/* ── theme.css inlined (font paths changed to relative) ── */
+@font-face {
+  font-family: 'Neuton';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../app/src/main/resources/static/fonts/neuton-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Neuton';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../app/src/main/resources/static/fonts/neuton-700.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../app/src/main/resources/static/fonts/hanken-grotesk-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../app/src/main/resources/static/fonts/hanken-grotesk-500.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../app/src/main/resources/static/fonts/hanken-grotesk-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Figtree';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../app/src/main/resources/static/fonts/figtree-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Figtree';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../app/src/main/resources/static/fonts/figtree-700.woff2') format('woff2');
+}
 
-  /* Header */
-  .app-header{background:var(--teal);color:#fff}
-  .app-header .inner{max-width:1200px;margin:0 auto;padding:.6rem 1.25rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
-  .brand{font-weight:700;font-size:1.1rem;color:#fff;text-decoration:none;white-space:nowrap}
-  .brand:hover{color:#fff}
-  .nav{display:flex;gap:.25rem;overflow-x:auto;flex:1;min-width:0}
-  .nav a{color:#fff;text-decoration:none;padding:.4rem .75rem;border-radius:4px;white-space:nowrap;font-weight:600}
-  .nav a:hover{background:var(--teal-dark);color:#fff}
-  .nav a.active{background:var(--sun);color:var(--teal-dark)}
-  .user{display:flex;align-items:center;gap:.75rem;white-space:nowrap;font-size:.9rem}
-  .user .role{opacity:.95}
-  .user a{color:#fff}
-  .hidden{display:none!important}
+/* ── Design tokens ── */
+:root {
+  --bg:         #FAFAF7;
+  --strip:      #E4E4DF;
+  --tab:        #EFEFEA;
+  --text:       #1F1F1F;
+  --muted:      #55575A;
+  --line:       #1F1F1F;
+  --accent:     #D9E7DF;
+  --accent-ink: #2F4A3E;
+  --danger:  #F4DCD6;
+  --warning: #F2E7C9;
+  --success: #D9E7DF;
+  --info:    #DDE4EE;
+}
 
-  main{max-width:1200px;margin:0 auto;padding:1.5rem 1.25rem 5rem}
-  .crumbs{font-size:.9rem;color:var(--muted);margin-bottom:.75rem}
-  .crumbs a{color:var(--teal)}
+/* ── Global ── */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Hanken Grotesk', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.5;
+}
+a { color: var(--text); }
+a:hover { text-decoration-color: var(--muted); }
 
-  .card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.25rem;margin-bottom:1rem}
-  .narrow{max-width:640px}
-  .row{display:flex;gap:1rem;flex-wrap:wrap;align-items:center}
-  .spread{justify-content:space-between}
+h1, h2, h3 {
+  font-family: 'Neuton', Georgia, serif;
+  color: var(--text);
+  margin: 0 0 .5rem;
+  line-height: 1.2;
+}
+h1 { font-size: 1.9rem; font-weight: 400; }
+h2 { font-size: 1.3rem; font-weight: 400; }
+h3 { font-size: 1.1rem; font-weight: 400; }
 
-  /* Buttons */
-  .btn{display:inline-block;background:var(--teal);color:#fff;border:2px solid var(--teal);border-radius:6px;padding:.6rem 1.1rem;font:inherit;font-weight:600;text-decoration:none;cursor:pointer}
-  .btn:hover{background:var(--teal-dark);border-color:var(--teal-dark);color:#fff}
-  .btn.secondary{background:#fff;color:var(--teal)}
-  .btn.secondary:hover{background:var(--info-bg);color:var(--teal-dark)}
-  .btn[aria-disabled="true"]{background:#EEF2F1;border-color:var(--border);color:#4F5F60;cursor:not-allowed}
-  .actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1rem}
+.eyebrow {
+  font-family: 'Figtree', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin: 0 0 0.25rem;
+}
 
-  /* Tags & alerts */
-  .tag{display:inline-block;font-size:.8rem;font-weight:700;padding:.15rem .55rem;border-radius:999px;white-space:nowrap}
-  .tag.danger{color:var(--danger);background:var(--danger-bg)}
-  .tag.warn{color:var(--warn);background:var(--warn-bg)}
-  .tag.info{color:var(--info);background:var(--info-bg)}
-  .tag.ok{color:var(--ok);background:var(--ok-bg)}
-  .alert{border-radius:6px;padding:.85rem 1rem;margin-bottom:1rem;border-left:5px solid;font-weight:600}
-  .alert .lbl{font-weight:700;margin-right:.35rem}
-  .alert.danger{color:var(--danger);background:var(--danger-bg);border-color:var(--danger)}
-  .alert.ok{color:var(--ok);background:var(--ok-bg);border-color:var(--ok)}
-  .alert.info{color:var(--info);background:var(--info-bg);border-color:var(--teal)}
+:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+.hidden { display: none !important; }
 
-  /* Forms */
-  label{display:block;font-weight:600;margin-bottom:.3rem}
-  .field{margin-bottom:1rem}
-  .input{width:100%;padding:.6rem .7rem;border:1px solid #8FA3A2;border-radius:6px;font:inherit;color:var(--text);background:#fff}
-  .input[readonly]{background:#F9FBFB}
-  textarea.input{min-height:90px;resize:vertical}
-  .input.invalid{border:2px solid var(--danger)}
-  .err{color:var(--danger);font-weight:600;margin-top:.35rem;font-size:.95rem}
-  .hint{color:var(--muted);font-size:.9rem;margin-top:.3rem}
-  .req{color:var(--danger)}
-  .proto-note{font-size:.85rem;color:var(--muted);font-style:italic}
+/* ── Header ── */
+.app-header {
+  background: var(--strip);
+  border-bottom: 1px solid var(--line);
+}
+.app-header .top-row {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.5rem 1.25rem 0.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.brand {
+  font-family: 'Figtree', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.brand:hover { color: var(--muted); }
+.user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  white-space: nowrap;
+  font-size: 0.875rem;
+  color: var(--text);
+}
+.user .role { color: var(--muted); }
+.user a { color: var(--text); }
+.user form button {
+  background: none; border: none; color: var(--text); cursor: pointer;
+  font: inherit; text-decoration: underline; padding: 0;
+}
+.user form button:hover { color: var(--muted); }
 
-  /* Login */
-  .login-wrap{min-height:80vh;display:flex;align-items:center;justify-content:center}
-  .login{width:100%;max-width:400px}
-  .login .logo{color:var(--teal-dark);font-weight:700;font-size:1.4rem;text-align:center;margin-bottom:.25rem}
-  .login .sub{text-align:center;color:var(--muted);margin-bottom:1.25rem}
+.nav-tabs {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+  display: flex;
+  overflow-x: auto;
+  gap: 4px;
+  scrollbar-width: none;
+}
+.nav-tabs::-webkit-scrollbar { display: none; }
 
-  /* Case list */
-  .case-list{list-style:none;margin:0;padding:0}
-  .case-item{display:grid;grid-template-columns:110px 1fr 1fr auto;gap:1rem;align-items:center;padding:.85rem 1rem;border-top:1px solid var(--border);color:var(--text);text-decoration:none}
-  .case-list li:first-child .case-item{border-top:0}
-  a.case-item{border-left:4px solid transparent}
-  a.case-item:hover{background:var(--info-bg);color:var(--text)}
-  .case-id{font-weight:700;color:var(--teal)}
-  .small{font-size:.9rem;color:var(--muted)}
-  .list-head{display:grid;grid-template-columns:110px 1fr 1fr auto;gap:1rem;padding:0 1rem .5rem;font-size:.85rem;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border)}
+.nav-tabs a {
+  font-family: 'Figtree', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--text);
+  text-decoration: none;
+  padding: 0.4rem 1rem;
+  border-radius: 8px 8px 0 0;
+  border: 1px solid var(--line);
+  border-bottom: none;
+  white-space: nowrap;
+  display: block;
+  position: relative;
+  bottom: -1px;
+  background: var(--tab);
+}
+.nav-tabs a[aria-current="page"] {
+  background: var(--bg);
+  font-weight: 700;
+  border-top: 4px solid var(--accent-ink);
+  border-bottom: 1px solid var(--bg);
+  z-index: 1;
+  padding-top: calc(0.4rem - 3px);
+}
 
-  /* Case header */
-  .case-head dl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.75rem 1.5rem;margin:.75rem 0 0}
-  .case-head dt{font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
-  .case-head dd{margin:0;font-weight:600}
-  .placement-box{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
-  .placement-box .big{font-size:1.15rem;font-weight:700;color:var(--teal-dark)}
+/* ── Main layout ── */
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 5rem;
+}
+.crumbs { font-size: .9rem; color: var(--muted); margin-bottom: .75rem; }
+.crumbs a { color: var(--text); }
+.card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+.narrow { max-width: 640px; }
+.row { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+.spread { justify-content: space-between; }
+.small { font-size: .9rem; color: var(--muted); }
 
-  /* Homes */
-  .homes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
-  .home{display:block;background:#fff;border:1px solid var(--border);border-radius:8px;padding:1rem;color:var(--text);text-decoration:none}
-  a.home:hover{border-color:var(--teal);box-shadow:0 0 0 1px var(--teal)}
-  .home.selected{border:3px solid var(--sun);padding:calc(1rem - 2px)}
-  .home .name{font-weight:700;color:var(--teal-dark)}
-  .bar{height:12px;background:#E6ECEB;border-radius:999px;overflow:hidden;margin:.6rem 0 .35rem;border:1px solid #C3CFCE}
-  .bar span{display:block;height:100%;background:var(--teal)}
-  .bar.full span{background:var(--danger)}
-  .cap{display:flex;justify-content:space-between;gap:.5rem;font-size:.9rem;flex-wrap:wrap}
+/* ── Buttons ── */
+.btn {
+  display: inline-block;
+  font-family: 'Figtree', system-ui, sans-serif;
+  font-weight: 600;
+  background: var(--text);
+  color: #fff;
+  border: 1px solid var(--text);
+  border-radius: 999px;
+  padding: .55rem 1.25rem;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: inherit;
+  white-space: nowrap;
+}
+.btn:hover { background: #333; border-color: #333; color: #fff; }
+.btn.secondary {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--line);
+}
+.btn.secondary:hover { background: var(--strip); color: var(--text); }
+.btn[aria-disabled="true"] {
+  background: var(--strip);
+  border-color: var(--strip);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+.actions { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 1rem; }
 
-  /* Summary */
-  .summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
-  .summary div{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.75rem}
-  .summary .k{font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase}
-  .summary .v{font-weight:700;color:var(--teal-dark)}
+/* ── Tags ── */
+.tag {
+  display: inline-block;
+  font-family: 'Figtree', system-ui, sans-serif;
+  font-size: .78rem;
+  font-weight: 700;
+  padding: .18rem .6rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  color: var(--text);
+  border: 1px solid var(--line);
+}
+.tag.danger  { background: var(--danger); }
+.tag.warn    { background: var(--warning); }
+.tag.info    { background: var(--info); }
+.tag.ok      { background: var(--success); }
+.tag.neutral { background: var(--strip); color: var(--muted); border-color: var(--strip); }
 
-  /* Timeline */
-  .timeline{list-style:none;margin:0;padding:0;border-left:3px solid var(--border);margin-left:.5rem}
-  .timeline li{position:relative;padding:0 0 1.1rem 1.25rem}
-  .timeline li::before{content:"";position:absolute;left:-9px;top:.35rem;width:15px;height:15px;border-radius:50%;background:#fff;border:3px solid var(--teal)}
-  .timeline .when{font-weight:700;color:var(--teal-dark)}
-  .timeline .new{font-size:.8rem}
+/* ── Alert boxes ── */
+.alert {
+  border-radius: 12px;
+  padding: .85rem 1rem;
+  margin-bottom: 1rem;
+  border-left: 4px solid var(--line);
+  font-weight: 600;
+}
+.alert .lbl { font-weight: 700; margin-right: .35rem; }
+.alert.danger { background: var(--danger); }
+.alert.ok     { background: var(--success); }
+.alert.info   { background: var(--info); }
 
-  .badge{position:fixed;right:12px;bottom:12px;background:var(--teal-dark);color:#fff;font-size:.8rem;font-weight:600;padding:.4rem .75rem;border-radius:999px;box-shadow:0 2px 6px rgba(0,0,0,.2);z-index:10}
+/* ── Forms ── */
+label { display: block; font-weight: 600; margin-bottom: .3rem; }
+.field { margin-bottom: 1rem; }
+.input {
+  width: 100%; padding: .6rem .75rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font: inherit;
+  color: var(--text);
+  background: #fff;
+}
+.input[readonly] { background: var(--strip); border-color: var(--strip); }
+textarea.input { min-height: 90px; resize: vertical; }
+.input.invalid { border: 2px solid var(--line); background: var(--danger); }
+.err  { color: var(--text); font-weight: 600; margin-top: .35rem; font-size: .95rem; }
+.hint { color: var(--muted); font-size: .9rem; margin-top: .3rem; }
+.req  { color: var(--text); }
+.proto-note { font-size: .85rem; color: var(--muted); font-style: italic; }
 
-  /* ===== UC-5 additions ===== */
-  .tag.neutral{color:#4F5F60;background:#EEF2F1}
-  .tbl-wrap{overflow-x:auto}
-  table.tbl{width:100%;border-collapse:collapse;min-width:640px}
-  .tbl th{text-align:left;font-size:.85rem;color:var(--muted);padding:.5rem .75rem;border-bottom:2px solid var(--border);white-space:nowrap}
-  .tbl td{padding:.7rem .75rem;border-bottom:1px solid var(--border);vertical-align:middle}
-  .tbl tr:last-child td{border-bottom:0}
-  .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;margin-bottom:1rem}
-  .stat{background:#fff;border:1px solid var(--border);border-radius:8px;padding:1rem}
-  .stat .k{font-size:.85rem;font-weight:700;color:var(--muted)}
-  .stat .n{font-size:1.8rem;font-weight:700;color:var(--teal-dark);line-height:1.2;margin:.2rem 0}
-  .rate{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
-  .rate .bar{width:130px;margin:0}
-  .bar.ok span{background:var(--ok)}
-  .bar.warn span{background:var(--warn)}
-  .bar.danger span{background:var(--danger)}
-  .split{display:flex;height:16px;border-radius:999px;overflow:hidden;border:1px solid #C3CFCE;margin:.5rem 0}
-  .split .a{background:var(--ok)} .split .b{background:var(--danger)}
-  .alist{list-style:none;margin:0;padding:0}
-  .aitem{display:flex;gap:1rem;align-items:center;justify-content:space-between;padding:.8rem 1rem;border:1px solid var(--border);border-left:6px solid var(--teal);border-radius:6px;margin-bottom:.6rem;background:#fff}
-  .aitem.danger{border-left-color:var(--danger)}
-  .aitem.warn{border-left-color:var(--warn)}
-  .aitem.info{border-left-color:var(--teal)}
-  .aitem .t{font-weight:700;color:var(--teal-dark)}
-  .select{padding:.5rem .6rem;border:1px solid #8FA3A2;border-radius:6px;font:inherit;background:#fff;color:var(--text);min-width:220px}
-  .filter{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
-  .filter label{margin:0}
-  .rules{margin:.25rem 0 0;padding-left:1.2rem}
-  .rules li{margin-bottom:.35rem}
-  code.m{font-family:Consolas,"Courier New",monospace;font-size:.85em;background:var(--info-bg);color:var(--teal-dark);padding:0 .3rem;border-radius:3px}
-  .legend{display:flex;gap:.5rem;flex-wrap:wrap;font-size:.85rem;margin-top:.75rem}
-  .proto-links{text-align:center;margin-top:1rem;font-size:.9rem}
+/* ── Login ── */
+.login-wrap {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.login { width: 100%; max-width: 400px; }
+.login .logo {
+  font-family: 'Neuton', Georgia, serif;
+  font-size: 1.6rem;
+  font-weight: 400;
+  color: var(--text);
+  text-align: center;
+  margin-bottom: .25rem;
+}
+.login .sub { text-align: center; color: var(--muted); margin-bottom: 1.25rem; }
+.login .demo-box {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--accent);
+  border-radius: 8px;
+  font-size: .9rem;
+  color: var(--text);
+  border: 1px solid var(--line);
+}
 
-  @media (max-width:760px){
-    .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
-    .stat .n{font-size:1.5rem}
-    .aitem{flex-direction:column;align-items:flex-start;gap:.4rem}
-    .app-header .inner{gap:.5rem;padding:.6rem .9rem}
-    .nav{order:3;flex-basis:100%}
-    .user{margin-left:auto;font-size:.8rem}
-    main{padding:1rem .9rem 4.5rem}
-    .list-head{display:none}
-    .case-item{grid-template-columns:1fr auto;gap:.25rem .75rem}
-    .case-item .c2,.case-item .c3{grid-column:1 / -1}
-    .case-item .c4{grid-column:2;grid-row:1}
-    .case-head dl{grid-template-columns:repeat(2,minmax(0,1fr))}
-    .homes,.summary{grid-template-columns:1fr}
-    .actions .btn{flex:1 1 100%;text-align:center}
-    h1{font-size:1.3rem}
-  }
-  
-  </style>
-  <style>
-    /* ── prototype navigation ── */
-    section[id^="s-"] { display: none; }
-    section[id^="s-"].active { display: block; min-height: 100vh; }
-  </style>
+/* ── Case list ── */
+.case-list { list-style: none; margin: 0; padding: 0; }
+.case-item {
+  display: grid;
+  grid-template-columns: 110px 1fr 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  padding: .85rem 1rem;
+  border-top: 1px solid var(--strip);
+  color: var(--text);
+  text-decoration: none;
+}
+.case-list li:first-child .case-item { border-top: 0; }
+a.case-item { border-left: 4px solid transparent; }
+a.case-item:hover { background: var(--accent); }
+
+.case-id {
+  font-family: 'Figtree', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: .85rem;
+  background: var(--accent);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: .15rem .6rem;
+  display: inline-block;
+}
+.list-head {
+  display: grid;
+  grid-template-columns: 110px 1fr 1fr auto;
+  gap: 1rem;
+  padding: 0 1rem .5rem;
+  font-family: 'Figtree', system-ui, sans-serif;
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--muted);
+  border-bottom: 1px solid var(--line);
+}
+
+/* ── Case header ── */
+.case-head dl {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: .75rem 1.5rem;
+  margin: .75rem 0 0;
+}
+.case-head dt {
+  font-family: 'Figtree', system-ui, sans-serif;
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.case-head dd { margin: 0; font-weight: 600; }
+.placement-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.placement-box .big { font-size: 1.15rem; font-weight: 600; }
+
+/* ── Homes ── */
+.homes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.home {
+  display: block;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1rem;
+  color: var(--text);
+  text-decoration: none;
+}
+a.home:hover { background: var(--accent); }
+.home.selected { background: var(--accent); border: 2px solid var(--line); padding: calc(1rem - 1px); }
+.home .name { font-weight: 700; }
+.bar {
+  height: 10px;
+  background: var(--strip);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: .6rem 0 .35rem;
+  border: 1px solid var(--line);
+}
+.bar span { display: block; height: 100%; background: var(--success); }
+.bar.full span { background: var(--danger); }
+.cap { display: flex; justify-content: space-between; gap: .5rem; font-size: .9rem; flex-wrap: wrap; }
+
+/* ── Summary stats boxes ── */
+.summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.summary div {
+  background: var(--bg);
+  border: 1px solid var(--strip);
+  border-radius: 8px;
+  padding: .75rem;
+}
+.summary .k {
+  font-family: 'Figtree', system-ui, sans-serif;
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.summary .v { font-weight: 600; }
+
+/* ── Timeline ── */
+.timeline { list-style: none; margin: 0; padding: 0; border-left: 2px solid var(--line); margin-left: .5rem; }
+.timeline li { position: relative; padding: 0 0 1.1rem 1.25rem; }
+.timeline li::before {
+  content: "";
+  position: absolute;
+  left: -8px; top: .4rem;
+  width: 13px; height: 13px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--line);
+}
+.timeline .when { font-weight: 700; }
+.timeline .new { font-size: .8rem; }
+
+/* ── Badge ── */
+.badge {
+  position: fixed;
+  right: 12px; bottom: 12px;
+  background: var(--text);
+  color: #fff;
+  font-family: 'Figtree', system-ui, sans-serif;
+  font-size: .78rem;
+  font-weight: 600;
+  padding: .4rem .75rem;
+  border-radius: 999px;
+  z-index: 10;
+}
+
+/* ── Tables ── */
+.tbl-wrap { overflow-x: auto; }
+table.tbl { width: 100%; border-collapse: collapse; min-width: 640px; }
+.tbl th {
+  text-align: left;
+  font-family: 'Figtree', system-ui, sans-serif;
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--muted);
+  padding: .5rem .75rem;
+  border-bottom: 2px solid var(--line);
+  white-space: nowrap;
+}
+.tbl td { padding: .7rem .75rem; border-bottom: 1px solid var(--strip); vertical-align: middle; }
+.tbl tr:last-child td { border-bottom: 0; }
+
+/* ── Stats grid ── */
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin-bottom: 1rem; }
+.stat {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1rem;
+}
+.stat .k {
+  font-family: 'Figtree', system-ui, sans-serif;
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+.stat .n {
+  font-family: 'Neuton', Georgia, serif;
+  font-size: 2rem;
+  font-weight: 400;
+  color: var(--text);
+  line-height: 1.2;
+  margin: .2rem 0;
+}
+
+/* ── Rate bar ── */
+.rate { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+.rate .bar { width: 130px; margin: 0; }
+.bar.ok     span { background: var(--success); }
+.bar.warn   span { background: var(--warning); }
+.bar.danger span { background: var(--danger); }
+
+/* ── Split bar ── */
+.split {
+  display: flex;
+  height: 14px;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  margin: .5rem 0;
+}
+.split .a { background: var(--success); }
+.split .b { background: var(--danger); }
+
+/* ── Alert item list ── */
+.alist { list-style: none; margin: 0; padding: 0; }
+.aitem {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: .8rem 1rem;
+  border: 1px solid var(--strip);
+  border-left: 5px solid var(--line);
+  border-radius: 8px;
+  margin-bottom: .6rem;
+  background: #fff;
+}
+.aitem.danger { background: var(--danger); }
+.aitem.warn   { background: var(--warning); }
+.aitem.info   { background: var(--info); }
+.aitem .t { font-weight: 700; }
+
+/* ── Select / filter ── */
+.select {
+  padding: .5rem .6rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font: inherit;
+  background: #fff;
+  color: var(--text);
+  min-width: 220px;
+}
+.filter { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+.filter label { margin: 0; }
+.rules { margin: .25rem 0 0; padding-left: 1.2rem; }
+.rules li { margin-bottom: .35rem; }
+code.m {
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: .85em;
+  background: var(--info);
+  color: var(--text);
+  padding: 0 .3rem;
+  border-radius: 4px;
+}
+.legend { display: flex; gap: .5rem; flex-wrap: wrap; font-size: .85rem; margin-top: .75rem; }
+.proto-links { text-align: center; margin-top: 1rem; font-size: .9rem; }
+
+/* ── Responsive ── */
+@media (max-width: 760px) {
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stat .n { font-size: 1.5rem; }
+  .aitem { flex-direction: column; align-items: flex-start; gap: .4rem; }
+  .app-header .top-row { padding: .5rem .9rem .3rem; }
+  .nav-tabs { padding: 0 .9rem; }
+  main { padding: 1rem .9rem 4.5rem; }
+  .list-head { display: none; }
+  .case-item { grid-template-columns: 1fr auto; gap: .25rem .75rem; }
+  .case-item .c2, .case-item .c3 { grid-column: 1 / -1; }
+  .case-item .c4 { grid-column: 2; grid-row: 1; }
+  .case-head dl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .homes, .summary { grid-template-columns: 1fr; }
+  .actions .btn { flex: 1 1 100%; text-align: center; }
+  h1 { font-size: 1.5rem; }
+}
+
+/* ── Prototype nav bar ── */
+#proto-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background: #1F1F1F;
+  color: #fff;
+  z-index: 1000;
+  font-family: 'Figtree', system-ui, sans-serif;
+  font-size: .78rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 4px 8px;
+  border-bottom: 2px solid #444;
+}
+#proto-nav strong {
+  color: #aaa;
+  margin-right: 4px;
+  white-space: nowrap;
+}
+#proto-nav a {
+  color: #ccc;
+  text-decoration: none;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+#proto-nav a:hover { background: #333; color: #fff; }
+#proto-nav a.active { background: #2F4A3E; color: #fff; }
+#proto-nav .sep { color: #555; padding: 0 2px; }
+
+/* Push content below the fixed nav bar */
+body { padding-top: 36px; }
+
+/* Screen sections */
+.proto-screen { display: none; }
+.proto-screen.active { display: block; }
+</style>
 </head>
 <body>
-  <section id="s-login">
-<main style="max-width:1200px;margin:0 auto;padding:1.5rem 1.25rem 5rem">
+
+<!-- ── Prototype nav bar ── -->
+<nav id="proto-nav">
+  <strong>PROTO:</strong>
+  <a href="#screen-login">Login</a>
+  <span class="sep">·</span>
+  <a href="#screen-login-error">Login Error</a>
+  <span class="sep">·</span>
+  <a href="#screen-login-logout">Signed Out</a>
+  <span class="sep">·</span>
+  <a href="#screen-403">403</a>
+  <span class="sep">|</span>
+  <a href="#screen-cw-home">CW Home</a>
+  <span class="sep">·</span>
+  <a href="#screen-cw-cases">CW Cases</a>
+  <span class="sep">·</span>
+  <a href="#screen-cw-case-detail">Case C-1088</a>
+  <span class="sep">·</span>
+  <a href="#screen-cw-timeline">Timeline</a>
+  <span class="sep">·</span>
+  <a href="#screen-cw-end-placement">End Placement</a>
+  <span class="sep">·</span>
+  <a href="#screen-cw-new-placement">New Placement</a>
+  <span class="sep">·</span>
+  <a href="#screen-cw-placements">Placements</a>
+  <span class="sep">·</span>
+  <a href="#screen-cw-compliance">CW Compliance</a>
+  <span class="sep">|</span>
+  <a href="#screen-sup-dashboard">Sup Dashboard</a>
+  <span class="sep">·</span>
+  <a href="#screen-sup-dashboard-garcia">Sup Dashboard (Garcia)</a>
+  <span class="sep">|</span>
+  <a href="#screen-admin-scheduler">Admin Scheduler</a>
+  <span class="sep">·</span>
+  <a href="#screen-admin-scheduler-after">Admin Sched (After Run)</a>
+</nav>
+
+<!-- ============================================================
+     SCREEN: Login
+     ============================================================ -->
+<section id="screen-login" class="proto-screen">
+<main>
   <div class="login-wrap">
-    <div class="card login" style="background:#fff;border:1px solid #D9E2E1;border-radius:8px;padding:1.25rem;width:100%;max-width:400px">
-      <div class="logo" style="color:#0F4A4F;font-weight:700;font-size:1.4rem;text-align:center;margin-bottom:.25rem">Foster Care Tracking</div>
-      <div class="sub" style="text-align:center;color:#4F5F60;margin-bottom:1.25rem">Sign in to continue</div>
+    <div class="card login">
+      <p class="logo">Foster Care Tracking</p>
+      <p class="sub">Sign in to continue</p>
 
-      
-      
-
-      <form action="#" method="post">
-        <div class="field" style="margin-bottom:1rem">
-          <label for="u" style="display:block;font-weight:600;margin-bottom:.3rem">Username</label>
-          <input class="input" id="u" name="username" type="text" autocomplete="username" placeholder="m.garcia" required
-                 style="width:100%;padding:.6rem .7rem;border:1px solid #8FA3A2;border-radius:6px;font:inherit;color:#1F2D2E;background:#fff">
+      <form action="#" method="post" onsubmit="return false;">
+        <div class="field">
+          <label for="u-login">Username</label>
+          <input class="input" id="u-login" name="username" type="text"
+                 autocomplete="username" placeholder="m.garcia" required>
         </div>
-        <div class="field" style="margin-bottom:1rem">
-          <label for="p" style="display:block;font-weight:600;margin-bottom:.3rem">Password</label>
-          <input class="input" id="p" name="password" type="password" autocomplete="current-password" required
-                 style="width:100%;padding:.6rem .7rem;border:1px solid #8FA3A2;border-radius:6px;font:inherit;color:#1F2D2E;background:#fff">
+        <div class="field">
+          <label for="p-login">Password</label>
+          <input class="input" id="p-login" name="password" type="password"
+                 autocomplete="current-password" required>
         </div>
-        <button type="submit" style="display:block;width:100%;text-align:center;background:#16656B;color:#fff;border:2px solid #16656B;border-radius:6px;padding:.6rem 1.1rem;font:inherit;font-weight:600;cursor:pointer">Sign in</button>
+        <a href="#screen-cw-home" class="btn" style="display:block;width:100%;text-align:center">Sign in</a>
       </form>
-<div style="margin-top:1rem;padding:1rem;background:#f0f8f7;border-radius:6px;font-size:.9rem">
-  <strong>Demo accounts (password: demo):</strong><br>
-  <a href="#cw-home" style="display:inline-block;margin:.3rem .5rem .3rem 0;padding:.3rem .7rem;background:#16656B;color:#fff;border-radius:4px;text-decoration:none">m.garcia – Caseworker</a>
-  <a href="#dashboard" style="display:inline-block;margin:.3rem .5rem .3rem 0;padding:.3rem .7rem;background:#16656B;color:#fff;border-radius:4px;text-decoration:none">k.brown – Supervisor</a>
-  <a href="#scheduler" style="display:inline-block;margin:.3rem .5rem .3rem 0;padding:.3rem .7rem;background:#16656B;color:#fff;border-radius:4px;text-decoration:none">admin – Administrator</a>
-</div>
 
-      <div style="margin-top:1rem;padding:1rem;background:#E3F1EF;border-radius:6px;font-size:.9rem;color:#0F4A4F">
+      <div class="demo-box">
         <strong>Demo accounts</strong> (password: <code>demo</code>)<br>
         <ul style="margin:.5rem 0 0;padding-left:1.25rem;line-height:1.8">
           <li><strong>m.garcia</strong> — Caseworker</li>
@@ -229,36 +680,38 @@
     </div>
   </div>
 </main>
-<div class="badge" style="position:fixed;right:12px;bottom:12px;background:#0F4A4F;color:#fff;font-size:.8rem;font-weight:600;padding:.4rem .75rem;border-radius:999px;box-shadow:0 2px 6px rgba(0,0,0,.2);z-index:10">Prototype · synthetic data</div>
+<div class="badge">Prototype · synthetic data</div>
 </section>
 
-<section id="s-login-error">
-<main style="max-width:1200px;margin:0 auto;padding:1.5rem 1.25rem 5rem">
+<!-- ============================================================
+     SCREEN: Login Error
+     ============================================================ -->
+<section id="screen-login-error" class="proto-screen">
+<main>
   <div class="login-wrap">
-    <div class="card login" style="background:#fff;border:1px solid #D9E2E1;border-radius:8px;padding:1.25rem;width:100%;max-width:400px">
-      <div class="logo" style="color:#0F4A4F;font-weight:700;font-size:1.4rem;text-align:center;margin-bottom:.25rem">Foster Care Tracking</div>
-      <div class="sub" style="text-align:center;color:#4F5F60;margin-bottom:1.25rem">Sign in to continue</div>
+    <div class="card login">
+      <p class="logo">Foster Care Tracking</p>
+      <p class="sub">Sign in to continue</p>
 
-      <div class="alert danger" role="alert" style="border-radius:6px;padding:.85rem 1rem;margin-bottom:1rem;border-left:5px solid #B03A2E;background:#FBE6E2;color:#B03A2E;font-weight:600">
+      <div class="alert danger" role="alert">
         Invalid username or password.
       </div>
-      
 
-      <form action="#" method="post">
-        <div class="field" style="margin-bottom:1rem">
-          <label for="u" style="display:block;font-weight:600;margin-bottom:.3rem">Username</label>
-          <input class="input" id="u" name="username" type="text" autocomplete="username" placeholder="m.garcia" required
-                 style="width:100%;padding:.6rem .7rem;border:1px solid #8FA3A2;border-radius:6px;font:inherit;color:#1F2D2E;background:#fff">
+      <form action="#" method="post" onsubmit="return false;">
+        <div class="field">
+          <label for="u-error">Username</label>
+          <input class="input" id="u-error" name="username" type="text"
+                 autocomplete="username" placeholder="m.garcia" required>
         </div>
-        <div class="field" style="margin-bottom:1rem">
-          <label for="p" style="display:block;font-weight:600;margin-bottom:.3rem">Password</label>
-          <input class="input" id="p" name="password" type="password" autocomplete="current-password" required
-                 style="width:100%;padding:.6rem .7rem;border:1px solid #8FA3A2;border-radius:6px;font:inherit;color:#1F2D2E;background:#fff">
+        <div class="field">
+          <label for="p-error">Password</label>
+          <input class="input" id="p-error" name="password" type="password"
+                 autocomplete="current-password" required>
         </div>
-        <button type="submit" style="display:block;width:100%;text-align:center;background:#16656B;color:#fff;border:2px solid #16656B;border-radius:6px;padding:.6rem 1.1rem;font:inherit;font-weight:600;cursor:pointer">Sign in</button>
+        <a href="#screen-cw-home" class="btn" style="display:block;width:100%;text-align:center">Sign in</a>
       </form>
 
-      <div style="margin-top:1rem;padding:1rem;background:#E3F1EF;border-radius:6px;font-size:.9rem;color:#0F4A4F">
+      <div class="demo-box">
         <strong>Demo accounts</strong> (password: <code>demo</code>)<br>
         <ul style="margin:.5rem 0 0;padding-left:1.25rem;line-height:1.8">
           <li><strong>m.garcia</strong> — Caseworker</li>
@@ -269,26 +722,71 @@
     </div>
   </div>
 </main>
-<div class="badge" style="position:fixed;right:12px;bottom:12px;background:#0F4A4F;color:#fff;font-size:.8rem;font-weight:600;padding:.4rem .75rem;border-radius:999px;box-shadow:0 2px 6px rgba(0,0,0,.2);z-index:10">Prototype · synthetic data</div>
+<div class="badge">Prototype · synthetic data</div>
 </section>
 
-<section id="s-403">
+<!-- ============================================================
+     SCREEN: Login (Signed Out)
+     ============================================================ -->
+<section id="screen-login-logout" class="proto-screen">
+<main>
+  <div class="login-wrap">
+    <div class="card login">
+      <p class="logo">Foster Care Tracking</p>
+      <p class="sub">Sign in to continue</p>
+
+      <div class="alert ok" role="status">
+        You have been signed out.
+      </div>
+
+      <form action="#" method="post" onsubmit="return false;">
+        <div class="field">
+          <label for="u-logout">Username</label>
+          <input class="input" id="u-logout" name="username" type="text"
+                 autocomplete="username" placeholder="m.garcia" required>
+        </div>
+        <div class="field">
+          <label for="p-logout">Password</label>
+          <input class="input" id="p-logout" name="password" type="password"
+                 autocomplete="current-password" required>
+        </div>
+        <a href="#screen-cw-home" class="btn" style="display:block;width:100%;text-align:center">Sign in</a>
+      </form>
+
+      <div class="demo-box">
+        <strong>Demo accounts</strong> (password: <code>demo</code>)<br>
+        <ul style="margin:.5rem 0 0;padding-left:1.25rem;line-height:1.8">
+          <li><strong>m.garcia</strong> — Caseworker</li>
+          <li><strong>k.brown</strong> — Supervisor</li>
+          <li><strong>admin</strong> — Administrator</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</main>
+<div class="badge">Prototype · synthetic data</div>
+</section>
+
+<!-- ============================================================
+     SCREEN: 403 Access Denied
+     ============================================================ -->
+<section id="screen-403" class="proto-screen">
 <header class="app-header">
-  <div class="inner">
-    <a class="brand" href="#cw-home">Foster Care Tracking</a>
-    <nav class="nav" aria-label="Main">
-      <a href="#cw-home">My Work</a>
-      <a href="#cw-placements">Placements</a>
-      <a href="#cw-cases">Cases</a>
-      <a href="#cw-compliance">Compliance</a>
-    </nav>
+  <div class="top-row">
+    <a class="brand" href="#screen-cw-home">Foster Care Tracking</a>
     <div class="user">
-      <span><strong>m.garcia</strong> · <span class="role">Caseworker</span></span>
-      <form action="#" method="post" style="display:inline">
-        <button type="submit" style="background:none;border:none;color:#fff;cursor:pointer;font:inherit;text-decoration:underline;padding:0">Sign out</button>
+      <span><strong>m.garcia</strong> &middot; <span class="role">Caseworker</span></span>
+      <form style="display:inline" onsubmit="return false;">
+        <button type="button" onclick="location.hash='#screen-login-logout'">Sign out</button>
       </form>
     </div>
   </div>
+  <nav class="nav-tabs" aria-label="Main">
+    <a href="#screen-cw-home">My Work</a>
+    <a href="#screen-cw-placements">Placements</a>
+    <a href="#screen-cw-cases">Cases</a>
+    <a href="#screen-cw-compliance">Compliance</a>
+  </nav>
 </header>
 <main>
   <div class="card narrow" style="margin-top:2rem">
@@ -296,87 +794,63 @@
       <span class="lbl">403 Access Denied:</span>
       You do not have permission to view this page.
     </div>
-    <p>This area is restricted to Caseworkers. Please <a href="#cw-home">return home</a>.</p>
+    <p>This area is restricted to Caseworkers. Please <a href="#screen-cw-home">return home</a>.</p>
   </div>
 </main>
 <div class="badge">Prototype · synthetic data</div>
 </section>
 
-<section id="s-404">
+<!-- ============================================================
+     SCREEN: Caseworker Home (My Work)
+     ============================================================ -->
+<section id="screen-cw-home" class="proto-screen">
 <header class="app-header">
-  <div class="inner">
-    <a class="brand" href="#cw-home">Foster Care Tracking</a>
-  </div>
-</header>
-<main>
-
-  <div class="card narrow" style="margin-top:2rem">
-    <h1>Page not found</h1>
-    <p class="small">Path</p>
-    <p>The page you requested doesn't exist.</p>
-    <div class="actions">
-      <a class="btn" href="#cw-home">Back to My Work</a>
-      <a class="btn" href="#login">Go to sign in</a>
-    </div>
-  </div>
-
-</main>
-<div class="badge">Prototype · synthetic data</div>
-</section>
-
-<section id="s-cw-home">
-<header class="app-header">
-  <div class="inner">
-    <a class="brand" href="#cw-home">Foster Care Tracking</a>
-    <nav class="nav" aria-label="Main">
-      <a href="#cw-home"
-         aria-current="page" class=" active">My Work</a>
-      <a href="#cw-placements">Placements</a>
-      <a href="#cw-cases">Cases</a>
-      <a href="#cw-compliance">Compliance</a>
-    </nav>
+  <div class="top-row">
+    <a class="brand" href="#screen-cw-home">Foster Care Tracking</a>
     <div class="user">
-      <span><strong>m.garcia</strong> · <span class="role">Caseworker</span></span>
-      <form action="#" method="post" style="display:inline">
-        <button type="submit" style="background:none;border:none;color:#fff;cursor:pointer;font:inherit;text-decoration:underline;padding:0">Sign out</button>
+      <span><strong>m.garcia</strong> &middot; <span class="role">Caseworker</span></span>
+      <form style="display:inline" onsubmit="return false;">
+        <button type="button" onclick="location.hash='#screen-login-logout'">Sign out</button>
       </form>
     </div>
   </div>
+  <nav class="nav-tabs" aria-label="Main">
+    <a href="#screen-cw-home" aria-current="page">My Work</a>
+    <a href="#screen-cw-placements">Placements</a>
+    <a href="#screen-cw-cases">Cases</a>
+    <a href="#screen-cw-compliance">Compliance</a>
+  </nav>
 </header>
 <main>
 
+  <p class="eyebrow">CASEWORKER &middot; MY WORK</p>
   <h1>Good morning, Maria</h1>
-  <p class="small">Thursday, 11/12/2026</p>
+  <p class="small">Sunday, 11/15/2026</p>
 
-  <!-- ── Deadline alerts ──────────────────────────────────────────────────── -->
   <div class="card">
     <div class="row spread">
       <h2 style="margin:0">Deadline alerts (0)</h2>
       <span class="small">In-system alerts only &middot; no email or push</span>
     </div>
-    
-
-    
 
     <p class="small" style="margin:.5rem 0">
       No alerts yet. The deadline check runs nightly at 12:00 a.m. CT, or an administrator can run it now.
     </p>
 
-    <!-- Flagged overdue -->
     <div style="margin-top:.75rem">
       <div class="small" style="margin-bottom:.25rem">Flagged overdue (no reminder sent):</div>
       <ul class="alist">
         <li class="aitem danger">
           <div>
             <div class="t">Permanency review – C-1059</div>
-            <div class="small">Due 11/9/2026</div>
+            <div class="small">Due 11/12/2026</div>
           </div>
           <span class="tag danger">Overdue 3 days</span>
         </li>
         <li class="aitem danger">
           <div>
             <div class="t">Home visit (Noah K.) – C-1088</div>
-            <div class="small">Due 11/8/2026</div>
+            <div class="small">Due 11/11/2026</div>
           </div>
           <span class="tag danger">Overdue 4 days</span>
         </li>
@@ -384,10 +858,6 @@
     </div>
   </div>
 
-  <!-- No alerts and no overdue deadlines -->
-  
-
-  <!-- ── My visits ────────────────────────────────────────────────────────── -->
   <div class="card">
     <h2>My visits</h2>
     <div class="tbl-wrap">
@@ -396,120 +866,20 @@
           <tr><th>Date</th><th>Child</th><th>Case</th><th>Visit</th><th>Status</th></tr>
         </thead>
         <tbody>
-          <tr>
-            <td>9/18</td>
-            <td>Eli M.</td>
-            <td>C-1059</td>
-            <td>Home visit</td>
-            <td>
-              
-              
-              
-              <span class="tag ok">Completed</span>
-            </td>
-          </tr>
-          <tr>
-            <td>9/8</td>
-            <td>Noah K.</td>
-            <td>C-1088</td>
-            <td>Home visit</td>
-            <td>
-              
-              
-              
-              <span class="tag ok">Completed</span>
-            </td>
-          </tr>
-          <tr>
-            <td>10/13</td>
-            <td>Jordan P.</td>
-            <td>C-1042</td>
-            <td>Home visit</td>
-            <td>
-              
-              
-              
-              <span class="tag ok">Completed</span>
-            </td>
-          </tr>
-          <tr>
-            <td>10/23</td>
-            <td>Liam T.</td>
-            <td>C-1077</td>
-            <td>School visit</td>
-            <td>
-              
-              
-              
-              <span class="tag ok">Completed</span>
-            </td>
-          </tr>
-          <tr>
-            <td>11/5</td>
-            <td>Mia S.</td>
-            <td>C-1103</td>
-            <td>Home visit</td>
-            <td>
-              
-              
-              
-              <span class="tag ok">Completed</span>
-            </td>
-          </tr>
-          <tr>
-            <td>11/8</td>
-            <td>Noah K.</td>
-            <td>C-1088</td>
-            <td>Home visit</td>
-            <td>
-              <span class="tag danger">Overdue</span>
-              
-              
-              
-            </td>
-          </tr>
-          <tr>
-            <td>11/11</td>
-            <td>Ava R.</td>
-            <td>C-1092</td>
-            <td>School visit</td>
-            <td>
-              
-              <span class="tag danger">Missed</span>
-              
-              
-            </td>
-          </tr>
-          <tr>
-            <td>11/14</td>
-            <td>Jordan P.</td>
-            <td>C-1042</td>
-            <td>Home visit</td>
-            <td>
-              
-              
-              <span class="tag info">Scheduled</span>
-              
-            </td>
-          </tr>
-          <tr>
-            <td>11/18</td>
-            <td>Liam T.</td>
-            <td>C-1077</td>
-            <td>Home visit</td>
-            <td>
-              
-              
-              <span class="tag info">Scheduled</span>
-              
-            </td>
-          </tr>
+          <tr><td>9/21</td><td>Eli M.</td><td>C-1059</td><td>Home visit</td><td><span class="tag ok">Completed</span></td></tr>
+          <tr><td>9/11</td><td>Noah K.</td><td>C-1088</td><td>Home visit</td><td><span class="tag ok">Completed</span></td></tr>
+          <tr><td>10/16</td><td>Jordan P.</td><td>C-1042</td><td>Home visit</td><td><span class="tag ok">Completed</span></td></tr>
+          <tr><td>10/26</td><td>Liam T.</td><td>C-1077</td><td>School visit</td><td><span class="tag ok">Completed</span></td></tr>
+          <tr><td>11/8</td><td>Mia S.</td><td>C-1103</td><td>Home visit</td><td><span class="tag ok">Completed</span></td></tr>
+          <tr><td>11/11</td><td>Noah K.</td><td>C-1088</td><td>Home visit</td><td><span class="tag danger">Overdue</span></td></tr>
+          <tr><td>11/14</td><td>Ava R.</td><td>C-1092</td><td>School visit</td><td><span class="tag danger">Missed</span></td></tr>
+          <tr><td>11/17</td><td>Jordan P.</td><td>C-1042</td><td>Home visit</td><td><span class="tag info">Scheduled</span></td></tr>
+          <tr><td>11/21</td><td>Liam T.</td><td>C-1077</td><td>Home visit</td><td><span class="tag info">Scheduled</span></td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- ── My cases ─────────────────────────────────────────────────────────── -->
   <div class="card" style="padding:1rem 0">
     <div class="row spread" style="padding:0 1rem .75rem">
       <h2 style="margin:0">My cases</h2>
@@ -522,87 +892,51 @@
 
     <ul class="case-list">
       <li>
-        <a class="case-item"
-           href="#case">
+        <a class="case-item" href="#screen-cw-case-detail">
           <span class="case-id">C-1088</span>
-          <span class="c2">
-            <strong>Noah K.</strong>
-            <span class="small"> · Child ID 2231</span>
-          </span>
+          <span class="c2"><strong>Noah K.</strong><span class="small"> · Child ID 2231</span></span>
           <span class="c3 small">Patel Home</span>
-          <span class="c4">
-            <span class="tag warn">Placement change needed</span>
-          </span>
+          <span class="c4"><span class="tag warn">Placement change needed</span></span>
         </a>
       </li>
       <li>
-        <a class="case-item"
-           href="/caseworker/cases/C-1092">
+        <a class="case-item" href="#screen-cw-cases">
           <span class="case-id">C-1092</span>
-          <span class="c2">
-            <strong>Ava R.</strong>
-            <span class="small"> · Child ID 2245</span>
-          </span>
+          <span class="c2"><strong>Ava R.</strong><span class="small"> · Child ID 2245</span></span>
           <span class="c3 small">Nguyen Family Home</span>
-          <span class="c4">
-            <span class="tag danger">Missed visit</span>
-          </span>
+          <span class="c4"><span class="tag danger">Missed visit</span></span>
         </a>
       </li>
       <li>
-        <a class="case-item"
-           href="/caseworker/cases/C-1042">
+        <a class="case-item" href="#screen-cw-cases">
           <span class="case-id">C-1042</span>
-          <span class="c2">
-            <strong>Jordan P.</strong>
-            <span class="small"> · Child ID 2142</span>
-          </span>
+          <span class="c2"><strong>Jordan P.</strong><span class="small"> · Child ID 2142</span></span>
           <span class="c3 small">Johnson Home</span>
-          <span class="c4">
-            <span class="tag danger">Court report due today</span>
-          </span>
+          <span class="c4"><span class="tag danger">Court report due today</span></span>
         </a>
       </li>
       <li>
-        <a class="case-item"
-           href="/caseworker/cases/C-1077">
+        <a class="case-item" href="#screen-cw-cases">
           <span class="case-id">C-1077</span>
-          <span class="c2">
-            <strong>Liam T.</strong>
-            <span class="small"> · Child ID 2198</span>
-          </span>
+          <span class="c2"><strong>Liam T.</strong><span class="small"> · Child ID 2198</span></span>
           <span class="c3 small">Smith Home</span>
-          <span class="c4">
-            <span class="tag warn">Service plan review due in 1 day</span>
-          </span>
+          <span class="c4"><span class="tag warn">Service plan review due in 1 day</span></span>
         </a>
       </li>
       <li>
-        <a class="case-item"
-           href="/caseworker/cases/C-1103">
+        <a class="case-item" href="#screen-cw-cases">
           <span class="case-id">C-1103</span>
-          <span class="c2">
-            <strong>Mia S.</strong>
-            <span class="small"> · Child ID 2260</span>
-          </span>
+          <span class="c2"><strong>Mia S.</strong><span class="small"> · Child ID 2260</span></span>
           <span class="c3 small">Rivera Family Home</span>
-          <span class="c4">
-            <span class="tag info">Medical exam record due in 7 days</span>
-          </span>
+          <span class="c4"><span class="tag info">Medical exam record due in 7 days</span></span>
         </a>
       </li>
       <li>
-        <a class="case-item"
-           href="/caseworker/cases/C-1059">
+        <a class="case-item" href="#screen-cw-cases">
           <span class="case-id">C-1059</span>
-          <span class="c2">
-            <strong>Eli M.</strong>
-            <span class="small"> · Child ID 2175</span>
-          </span>
+          <span class="c2"><strong>Eli M.</strong><span class="small"> · Child ID 2175</span></span>
           <span class="c3 small">No active placement</span>
-          <span class="c4">
-            <span class="tag danger">Permanency review overdue</span>
-          </span>
+          <span class="c4"><span class="tag danger">Permanency review overdue</span></span>
         </a>
       </li>
     </ul>
@@ -612,27 +946,30 @@
 <div class="badge">Prototype · synthetic data</div>
 </section>
 
-<section id="s-cw-cases">
+<!-- ============================================================
+     SCREEN: Caseworker Cases
+     ============================================================ -->
+<section id="screen-cw-cases" class="proto-screen">
 <header class="app-header">
-  <div class="inner">
-    <a class="brand" href="#cw-home">Foster Care Tracking</a>
-    <nav class="nav" aria-label="Main">
-      <a href="#cw-home">My Work</a>
-      <a href="#cw-placements">Placements</a>
-      <a href="#cw-cases"
-         aria-current="page" class=" active">Cases</a>
-      <a href="#cw-compliance">Compliance</a>
-    </nav>
+  <div class="top-row">
+    <a class="brand" href="#screen-cw-home">Foster Care Tracking</a>
     <div class="user">
-      <span><strong>m.garcia</strong> · <span class="role">Caseworker</span></span>
-      <form action="#" method="post" style="display:inline">
-        <button type="submit" style="background:none;border:none;color:#fff;cursor:pointer;font:inherit;text-decoration:underline;padding:0">Sign out</button>
+      <span><strong>m.garcia</strong> &middot; <span class="role">Caseworker</span></span>
+      <form style="display:inline" onsubmit="return false;">
+        <button type="button" onclick="location.hash='#screen-login-logout'">Sign out</button>
       </form>
     </div>
   </div>
+  <nav class="nav-tabs" aria-label="Main">
+    <a href="#screen-cw-home">My Work</a>
+    <a href="#screen-cw-placements">Placements</a>
+    <a href="#screen-cw-cases" aria-current="page">Cases</a>
+    <a href="#screen-cw-compliance">Compliance</a>
+  </nav>
 </header>
 <main>
 
+  <p class="eyebrow">CASEWORKER &middot; MY CASES</p>
   <h1>Cases</h1>
 
   <div class="alert info" role="note">
@@ -652,87 +989,51 @@
 
     <ul class="case-list">
       <li>
-        <a class="case-item"
-           href="#case">
+        <a class="case-item" href="#screen-cw-case-detail">
           <span class="case-id">C-1088</span>
-          <span class="c2">
-            <strong>Noah K.</strong>
-            <span class="small"> · Child ID 2231</span>
-          </span>
+          <span class="c2"><strong>Noah K.</strong><span class="small"> · Child ID 2231</span></span>
           <span class="c3 small">Patel Home</span>
-          <span class="c4">
-            <span class="tag warn">Placement change needed</span>
-          </span>
+          <span class="c4"><span class="tag warn">Placement change needed</span></span>
         </a>
       </li>
       <li>
-        <a class="case-item"
-           href="/caseworker/cases/C-1092">
+        <a class="case-item" href="#screen-cw-cases">
           <span class="case-id">C-1092</span>
-          <span class="c2">
-            <strong>Ava R.</strong>
-            <span class="small"> · Child ID 2245</span>
-          </span>
+          <span class="c2"><strong>Ava R.</strong><span class="small"> · Child ID 2245</span></span>
           <span class="c3 small">Nguyen Family Home</span>
-          <span class="c4">
-            <span class="tag danger">Missed visit</span>
-          </span>
+          <span class="c4"><span class="tag danger">Missed visit</span></span>
         </a>
       </li>
       <li>
-        <a class="case-item"
-           href="/caseworker/cases/C-1042">
+        <a class="case-item" href="#screen-cw-cases">
           <span class="case-id">C-1042</span>
-          <span class="c2">
-            <strong>Jordan P.</strong>
-            <span class="small"> · Child ID 2142</span>
-          </span>
+          <span class="c2"><strong>Jordan P.</strong><span class="small"> · Child ID 2142</span></span>
           <span class="c3 small">Johnson Home</span>
-          <span class="c4">
-            <span class="tag danger">Court report due today</span>
-          </span>
+          <span class="c4"><span class="tag danger">Court report due today</span></span>
         </a>
       </li>
       <li>
-        <a class="case-item"
-           href="/caseworker/cases/C-1077">
+        <a class="case-item" href="#screen-cw-cases">
           <span class="case-id">C-1077</span>
-          <span class="c2">
-            <strong>Liam T.</strong>
-            <span class="small"> · Child ID 2198</span>
-          </span>
+          <span class="c2"><strong>Liam T.</strong><span class="small"> · Child ID 2198</span></span>
           <span class="c3 small">Smith Home</span>
-          <span class="c4">
-            <span class="tag warn">Service plan review due in 1 day</span>
-          </span>
+          <span class="c4"><span class="tag warn">Service plan review due in 1 day</span></span>
         </a>
       </li>
       <li>
-        <a class="case-item"
-           href="/caseworker/cases/C-1103">
+        <a class="case-item" href="#screen-cw-cases">
           <span class="case-id">C-1103</span>
-          <span class="c2">
-            <strong>Mia S.</strong>
-            <span class="small"> · Child ID 2260</span>
-          </span>
+          <span class="c2"><strong>Mia S.</strong><span class="small"> · Child ID 2260</span></span>
           <span class="c3 small">Rivera Family Home</span>
-          <span class="c4">
-            <span class="tag info">Medical exam record due in 7 days</span>
-          </span>
+          <span class="c4"><span class="tag info">Medical exam record due in 7 days</span></span>
         </a>
       </li>
       <li>
-        <a class="case-item"
-           href="/caseworker/cases/C-1059">
+        <a class="case-item" href="#screen-cw-cases">
           <span class="case-id">C-1059</span>
-          <span class="c2">
-            <strong>Eli M.</strong>
-            <span class="small"> · Child ID 2175</span>
-          </span>
+          <span class="c2"><strong>Eli M.</strong><span class="small"> · Child ID 2175</span></span>
           <span class="c3 small">No active placement</span>
-          <span class="c4">
-            <span class="tag danger">Permanency review overdue</span>
-          </span>
+          <span class="c4"><span class="tag danger">Permanency review overdue</span></span>
         </a>
       </li>
     </ul>
@@ -742,27 +1043,365 @@
 <div class="badge">Prototype · synthetic data</div>
 </section>
 
-<section id="s-cw-placements">
+<!-- ============================================================
+     SCREEN: Case Detail C-1088
+     ============================================================ -->
+<section id="screen-cw-case-detail" class="proto-screen">
 <header class="app-header">
-  <div class="inner">
-    <a class="brand" href="#cw-home">Foster Care Tracking</a>
-    <nav class="nav" aria-label="Main">
-      <a href="#cw-home">My Work</a>
-      <a href="#cw-placements"
-         aria-current="page" class=" active">Placements</a>
-      <a href="#cw-cases">Cases</a>
-      <a href="#cw-compliance">Compliance</a>
-    </nav>
+  <div class="top-row">
+    <a class="brand" href="#screen-cw-home">Foster Care Tracking</a>
     <div class="user">
-      <span><strong>m.garcia</strong> · <span class="role">Caseworker</span></span>
-      <form action="#" method="post" style="display:inline">
-        <button type="submit" style="background:none;border:none;color:#fff;cursor:pointer;font:inherit;text-decoration:underline;padding:0">Sign out</button>
+      <span><strong>m.garcia</strong> &middot; <span class="role">Caseworker</span></span>
+      <form style="display:inline" onsubmit="return false;">
+        <button type="button" onclick="location.hash='#screen-login-logout'">Sign out</button>
       </form>
     </div>
   </div>
+  <nav class="nav-tabs" aria-label="Main">
+    <a href="#screen-cw-home">My Work</a>
+    <a href="#screen-cw-placements">Placements</a>
+    <a href="#screen-cw-cases" aria-current="page">Cases</a>
+    <a href="#screen-cw-compliance">Compliance</a>
+  </nav>
 </header>
 <main>
 
+  <div class="crumbs">
+    <a href="#screen-cw-home">My cases</a>
+    &rsaquo; <span>C-1088</span>
+  </div>
+
+  <p class="eyebrow">CASEWORKER &middot; CASE DETAIL</p>
+
+  <div class="card case-head">
+    <div class="row spread">
+      <h1 style="margin:0">Case C-1088 &middot; Noah K.</h1>
+      <span class="tag info">Status: <span>Open</span></span>
+    </div>
+    <dl>
+      <div><dt>Case ID</dt>    <dd>C-1088</dd></div>
+      <div><dt>Child</dt>      <dd>Noah K. (ID 2231)</dd></div>
+      <div><dt>Status</dt>     <dd>Open</dd></div>
+      <div><dt>Assigned caseworker</dt><dd>Maria Garcia</dd></div>
+    </dl>
+  </div>
+
+  <div class="card">
+    <h2>Current placement</h2>
+    <div>
+      <div class="placement-box">
+        <div>
+          <div class="big">Patel Home – since 3/14/2025</div>
+          <div class="small">Irving, TX &middot; Placement ID P-1</div>
+        </div>
+      </div>
+      <div class="actions">
+        <a class="btn" href="#screen-cw-end-placement">End placement</a>
+        <a class="btn" aria-disabled="true" title="End the current placement first" href="#">New placement</a>
+      </div>
+      <p class="hint">End the current placement before creating a new one.</p>
+    </div>
+  </div>
+
+  <p><a href="#screen-cw-timeline">View case timeline</a></p>
+
+</main>
+<div class="badge">Prototype · synthetic data</div>
+</section>
+
+<!-- ============================================================
+     SCREEN: Case Timeline C-1088
+     ============================================================ -->
+<section id="screen-cw-timeline" class="proto-screen">
+<header class="app-header">
+  <div class="top-row">
+    <a class="brand" href="#screen-cw-home">Foster Care Tracking</a>
+    <div class="user">
+      <span><strong>m.garcia</strong> &middot; <span class="role">Caseworker</span></span>
+      <form style="display:inline" onsubmit="return false;">
+        <button type="button" onclick="location.hash='#screen-login-logout'">Sign out</button>
+      </form>
+    </div>
+  </div>
+  <nav class="nav-tabs" aria-label="Main">
+    <a href="#screen-cw-home">My Work</a>
+    <a href="#screen-cw-placements">Placements</a>
+    <a href="#screen-cw-cases" aria-current="page">Cases</a>
+    <a href="#screen-cw-compliance">Compliance</a>
+  </nav>
+</header>
+<main>
+
+  <div class="crumbs">
+    <a href="#screen-cw-home">My cases</a>
+    &rsaquo; <a href="#screen-cw-case-detail">C-1088</a>
+    &rsaquo; Timeline
+  </div>
+
+  <p class="eyebrow">CASEWORKER &middot; CASE TIMELINE</p>
+
+  <div class="card case-head">
+    <div class="row spread">
+      <h1 style="margin:0">Case C-1088 &middot; Noah K.</h1>
+      <span class="tag info">Status: <span>Open</span></span>
+    </div>
+    <dl>
+      <div><dt>Case ID</dt>          <dd>C-1088</dd></div>
+      <div><dt>Child</dt>            <dd>Noah K. (ID 2231)</dd></div>
+      <div><dt>Current placement</dt><dd>Patel Home – since 3/14/2025</dd></div>
+      <div><dt>Assigned caseworker</dt><dd>Maria Garcia</dd></div>
+    </dl>
+  </div>
+
+  <div class="card">
+    <div class="row spread" style="margin-bottom:1rem">
+      <div>
+        <h2 style="margin:0">Case timeline</h2>
+        <div class="small">Newest first &middot; read-only</div>
+      </div>
+      <a href="#" onclick="return false" title="Not available in this build">Export as PDF</a>
+    </div>
+
+    <ol class="timeline">
+      <li>
+        <div class="when">10/11/2026 14:05 &middot; M. Garcia</div>
+        <div>Home visit completed, notes added</div>
+        <span class="tag info new">Logged automatically</span>
+      </li>
+      <li>
+        <div class="when">9/6/2026 10:30 &middot; M. Garcia</div>
+        <div>Service plan review completed</div>
+        <span class="tag info new">Logged automatically</span>
+      </li>
+      <li>
+        <div class="when">3/14/2025 11:22 &middot; K. Brown (Supervisor)</div>
+        <div>Placement started: Patel Home</div>
+        <span class="tag info new">Logged automatically</span>
+      </li>
+    </ol>
+  </div>
+
+  <a class="btn secondary" href="#screen-cw-home">Back to My cases</a>
+
+</main>
+<div class="badge">Prototype · synthetic data</div>
+</section>
+
+<!-- ============================================================
+     SCREEN: End Placement C-1088
+     ============================================================ -->
+<section id="screen-cw-end-placement" class="proto-screen">
+<header class="app-header">
+  <div class="top-row">
+    <a class="brand" href="#screen-cw-home">Foster Care Tracking</a>
+    <div class="user">
+      <span><strong>m.garcia</strong> &middot; <span class="role">Caseworker</span></span>
+      <form style="display:inline" onsubmit="return false;">
+        <button type="button" onclick="location.hash='#screen-login-logout'">Sign out</button>
+      </form>
+    </div>
+  </div>
+  <nav class="nav-tabs" aria-label="Main">
+    <a href="#screen-cw-home">My Work</a>
+    <a href="#screen-cw-placements" aria-current="page">Placements</a>
+    <a href="#screen-cw-cases">Cases</a>
+    <a href="#screen-cw-compliance">Compliance</a>
+  </nav>
+</header>
+<main>
+
+  <div class="crumbs">
+    <a href="#screen-cw-home">My cases</a>
+    &rsaquo; <a href="#screen-cw-case-detail">C-1088</a>
+    &rsaquo; End placement
+  </div>
+
+  <p class="eyebrow">CASEWORKER &middot; END PLACEMENT</p>
+
+  <div class="card narrow">
+    <h1>End placement</h1>
+    <p class="small">Noah K. (ID 2231) &middot; Patel Home – since 3/14/2025</p>
+
+    <form action="#" method="post" onsubmit="return false;">
+      <div class="field">
+        <label for="endDate">End date <span class="req">*</span></label>
+        <input class="input" id="endDate" type="text" value="11/15/2026" readonly>
+      </div>
+
+      <div class="field">
+        <label for="reason">Reason for placement change <span class="req">*</span></label>
+        <textarea class="input" id="reason" name="reason"></textarea>
+      </div>
+
+      <div class="actions">
+        <a href="#screen-cw-new-placement" class="btn">Confirm end of placement</a>
+        <a class="btn secondary" href="#screen-cw-case-detail">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+</main>
+<div class="badge">Prototype · synthetic data</div>
+</section>
+
+<!-- ============================================================
+     SCREEN: New Placement C-1088
+     ============================================================ -->
+<section id="screen-cw-new-placement" class="proto-screen">
+<header class="app-header">
+  <div class="top-row">
+    <a class="brand" href="#screen-cw-home">Foster Care Tracking</a>
+    <div class="user">
+      <span><strong>m.garcia</strong> &middot; <span class="role">Caseworker</span></span>
+      <form style="display:inline" onsubmit="return false;">
+        <button type="button" onclick="location.hash='#screen-login-logout'">Sign out</button>
+      </form>
+    </div>
+  </div>
+  <nav class="nav-tabs" aria-label="Main">
+    <a href="#screen-cw-home">My Work</a>
+    <a href="#screen-cw-placements" aria-current="page">Placements</a>
+    <a href="#screen-cw-cases">Cases</a>
+    <a href="#screen-cw-compliance">Compliance</a>
+  </nav>
+</header>
+<main>
+
+  <div class="crumbs">
+    <a href="#screen-cw-home">My cases</a>
+    &rsaquo; <a href="#screen-cw-case-detail">C-1088</a>
+    &rsaquo; New placement
+  </div>
+  <p class="eyebrow">CASEWORKER &middot; NEW PLACEMENT</p>
+  <h1>New placement – select foster home</h1>
+
+  <div class="card">
+    <div class="row" style="align-items:flex-start">
+      <div class="field" style="flex:1 1 220px;margin:0">
+        <label>Child</label>
+        <input class="input" value="Noah K. (ID 2231)" readonly>
+      </div>
+      <div class="field" style="flex:1 1 220px;margin:0">
+        <label>Start date</label>
+        <input class="input" value="11/15/2026" readonly>
+      </div>
+    </div>
+  </div>
+
+  <h2>Foster homes</h2>
+  <p class="small">Select a home. Capacity is checked before the placement is saved.</p>
+
+  <div class="homes">
+    <a href="#screen-cw-timeline" class="home" style="text-align:left">
+      <div class="row spread">
+        <span class="name">Cedar Home</span>
+      </div>
+      <div class="small">Mesquite, TX</div>
+      <div class="bar" role="img" aria-label="2 of 3 beds used">
+        <span style="width:67%"></span>
+      </div>
+      <div class="cap">
+        <span>2 of 3 beds used</span>
+        <span>1 bed open</span>
+      </div>
+    </a>
+    <a href="#screen-cw-timeline" class="home" style="text-align:left">
+      <div class="row spread">
+        <span class="name">Johnson Home</span>
+      </div>
+      <div class="small">Richardson, TX</div>
+      <div class="bar" role="img" aria-label="2 of 4 beds used">
+        <span style="width:50%"></span>
+      </div>
+      <div class="cap">
+        <span>2 of 4 beds used</span>
+        <span>2 beds open</span>
+      </div>
+    </a>
+    <a href="#screen-cw-timeline" class="home" style="text-align:left">
+      <div class="row spread">
+        <span class="name">Nguyen Family Home</span>
+      </div>
+      <div class="small">Plano, TX</div>
+      <div class="bar" role="img" aria-label="2 of 3 beds used">
+        <span style="width:67%"></span>
+      </div>
+      <div class="cap">
+        <span>2 of 3 beds used</span>
+        <span>1 bed open</span>
+      </div>
+    </a>
+    <a href="#screen-cw-timeline" class="home" style="text-align:left">
+      <div class="row spread">
+        <span class="name">Patel Home</span>
+      </div>
+      <div class="small">Irving, TX</div>
+      <div class="bar" role="img" aria-label="3 of 4 beds used">
+        <span style="width:75%"></span>
+      </div>
+      <div class="cap">
+        <span>3 of 4 beds used</span>
+        <span>1 bed open</span>
+      </div>
+    </a>
+    <a href="#" onclick="return false;" class="home" style="text-align:left;opacity:.6;cursor:not-allowed">
+      <div class="row spread">
+        <span class="name">Rivera Family Home</span>
+        <span class="tag danger">Full</span>
+      </div>
+      <div class="small">Garland, TX</div>
+      <div class="bar full" role="img" aria-label="4 of 4 beds used, full">
+        <span style="width:100%"></span>
+      </div>
+      <div class="cap">
+        <span>4 of 4 beds used</span>
+        <span>0 beds open</span>
+      </div>
+    </a>
+    <a href="#" onclick="return false;" class="home" style="text-align:left;opacity:.6;cursor:not-allowed">
+      <div class="row spread">
+        <span class="name">Smith Home</span>
+        <span class="tag danger">Full</span>
+      </div>
+      <div class="small">Dallas, TX</div>
+      <div class="bar full" role="img" aria-label="2 of 2 beds used, full">
+        <span style="width:100%"></span>
+      </div>
+      <div class="cap">
+        <span>2 of 2 beds used</span>
+        <span>0 beds open</span>
+      </div>
+    </a>
+  </div>
+
+</main>
+<div class="badge">Prototype · synthetic data</div>
+</section>
+
+<!-- ============================================================
+     SCREEN: Caseworker Placements
+     ============================================================ -->
+<section id="screen-cw-placements" class="proto-screen">
+<header class="app-header">
+  <div class="top-row">
+    <a class="brand" href="#screen-cw-home">Foster Care Tracking</a>
+    <div class="user">
+      <span><strong>m.garcia</strong> &middot; <span class="role">Caseworker</span></span>
+      <form style="display:inline" onsubmit="return false;">
+        <button type="button" onclick="location.hash='#screen-login-logout'">Sign out</button>
+      </form>
+    </div>
+  </div>
+  <nav class="nav-tabs" aria-label="Main">
+    <a href="#screen-cw-home">My Work</a>
+    <a href="#screen-cw-placements" aria-current="page">Placements</a>
+    <a href="#screen-cw-cases">Cases</a>
+    <a href="#screen-cw-compliance">Compliance</a>
+  </nav>
+</header>
+<main>
+
+  <p class="eyebrow">CASEWORKER &middot; PLACEMENTS</p>
   <h1>Placements</h1>
   <p class="small">Active placements for your assigned cases</p>
 
@@ -774,97 +1413,55 @@
       <li>
         <div class="case-item" style="grid-template-columns:110px 1fr 1fr 1fr auto">
           <span class="case-id">C-1088</span>
-          <span class="c2">
-            <strong>Noah K.</strong>
-            <span class="small"> · 2231</span>
-          </span>
+          <span class="c2"><strong>Noah K.</strong><span class="small"> &middot; 2231</span></span>
           <span class="small">Patel Home</span>
-          
           <span class="small">3/14/2025</span>
-          
-          <a class="btn secondary"
-             style="font-size:.85rem;padding:.35rem .75rem"
-             href="#case">Manage placement</a>
+          <a class="btn secondary" style="font-size:.85rem;padding:.35rem .75rem" href="#screen-cw-case-detail">Manage placement</a>
         </div>
       </li>
       <li>
         <div class="case-item" style="grid-template-columns:110px 1fr 1fr 1fr auto">
           <span class="case-id">C-1092</span>
-          <span class="c2">
-            <strong>Ava R.</strong>
-            <span class="small"> · 2245</span>
-          </span>
+          <span class="c2"><strong>Ava R.</strong><span class="small"> &middot; 2245</span></span>
           <span class="small">Nguyen Family Home</span>
-          
-          <span class="small">4/26/2026</span>
-          
-          <a class="btn secondary"
-             style="font-size:.85rem;padding:.35rem .75rem"
-             href="/caseworker/cases/C-1092">Manage placement</a>
+          <span class="small">4/29/2026</span>
+          <a class="btn secondary" style="font-size:.85rem;padding:.35rem .75rem" href="#screen-cw-cases">Manage placement</a>
         </div>
       </li>
       <li>
         <div class="case-item" style="grid-template-columns:110px 1fr 1fr 1fr auto">
           <span class="case-id">C-1042</span>
-          <span class="c2">
-            <strong>Jordan P.</strong>
-            <span class="small"> · 2142</span>
-          </span>
+          <span class="c2"><strong>Jordan P.</strong><span class="small"> &middot; 2142</span></span>
           <span class="small">Johnson Home</span>
-          
-          <span class="small">1/16/2026</span>
-          
-          <a class="btn secondary"
-             style="font-size:.85rem;padding:.35rem .75rem"
-             href="/caseworker/cases/C-1042">Manage placement</a>
+          <span class="small">1/19/2026</span>
+          <a class="btn secondary" style="font-size:.85rem;padding:.35rem .75rem" href="#screen-cw-cases">Manage placement</a>
         </div>
       </li>
       <li>
         <div class="case-item" style="grid-template-columns:110px 1fr 1fr 1fr auto">
           <span class="case-id">C-1077</span>
-          <span class="c2">
-            <strong>Liam T.</strong>
-            <span class="small"> · 2198</span>
-          </span>
+          <span class="c2"><strong>Liam T.</strong><span class="small"> &middot; 2198</span></span>
           <span class="small">Smith Home</span>
-          
-          <span class="small">6/15/2026</span>
-          
-          <a class="btn secondary"
-             style="font-size:.85rem;padding:.35rem .75rem"
-             href="/caseworker/cases/C-1077">Manage placement</a>
+          <span class="small">6/18/2026</span>
+          <a class="btn secondary" style="font-size:.85rem;padding:.35rem .75rem" href="#screen-cw-cases">Manage placement</a>
         </div>
       </li>
       <li>
         <div class="case-item" style="grid-template-columns:110px 1fr 1fr 1fr auto">
           <span class="case-id">C-1103</span>
-          <span class="c2">
-            <strong>Mia S.</strong>
-            <span class="small"> · 2260</span>
-          </span>
+          <span class="c2"><strong>Mia S.</strong><span class="small"> &middot; 2260</span></span>
           <span class="small">Rivera Family Home</span>
-          
-          <span class="small">8/4/2026</span>
-          
-          <a class="btn secondary"
-             style="font-size:.85rem;padding:.35rem .75rem"
-             href="/caseworker/cases/C-1103">Manage placement</a>
+          <span class="small">8/7/2026</span>
+          <a class="btn secondary" style="font-size:.85rem;padding:.35rem .75rem" href="#screen-cw-cases">Manage placement</a>
         </div>
       </li>
       <li>
         <div class="case-item" style="grid-template-columns:110px 1fr 1fr 1fr auto">
           <span class="case-id">C-1059</span>
-          <span class="c2">
-            <strong>Eli M.</strong>
-            <span class="small"> · 2175</span>
-          </span>
-          
+          <span class="c2"><strong>Eli M.</strong><span class="small"> &middot; 2175</span></span>
           <span class="small" style="color:var(--muted)">No active placement</span>
-          
           <span class="small"></span>
-          <a class="btn secondary"
-             style="font-size:.85rem;padding:.35rem .75rem"
-             href="/caseworker/cases/C-1059">Manage placement</a>
+          <a class="btn secondary" style="font-size:.85rem;padding:.35rem .75rem" href="#screen-cw-cases">Manage placement</a>
         </div>
       </li>
     </ul>
@@ -874,59 +1471,57 @@
 <div class="badge">Prototype · synthetic data</div>
 </section>
 
-<section id="s-cw-compliance">
+<!-- ============================================================
+     SCREEN: Caseworker Compliance
+     ============================================================ -->
+<section id="screen-cw-compliance" class="proto-screen">
 <header class="app-header">
-  <div class="inner">
-    <a class="brand" href="#cw-home">Foster Care Tracking</a>
-    <nav class="nav" aria-label="Main">
-      <a href="#cw-home">My Work</a>
-      <a href="#cw-placements">Placements</a>
-      <a href="#cw-cases">Cases</a>
-      <a href="#cw-compliance"
-         aria-current="page" class=" active">Compliance</a>
-    </nav>
+  <div class="top-row">
+    <a class="brand" href="#screen-cw-home">Foster Care Tracking</a>
     <div class="user">
-      <span><strong>m.garcia</strong> · <span class="role">Caseworker</span></span>
-      <form action="#" method="post" style="display:inline">
-        <button type="submit" style="background:none;border:none;color:#fff;cursor:pointer;font:inherit;text-decoration:underline;padding:0">Sign out</button>
+      <span><strong>m.garcia</strong> &middot; <span class="role">Caseworker</span></span>
+      <form style="display:inline" onsubmit="return false;">
+        <button type="button" onclick="location.hash='#screen-login-logout'">Sign out</button>
       </form>
     </div>
   </div>
+  <nav class="nav-tabs" aria-label="Main">
+    <a href="#screen-cw-home">My Work</a>
+    <a href="#screen-cw-placements">Placements</a>
+    <a href="#screen-cw-cases">Cases</a>
+    <a href="#screen-cw-compliance" aria-current="page">Compliance</a>
+  </nav>
 </header>
 <main>
 
+  <p class="eyebrow">CASEWORKER &middot; COMPLIANCE</p>
   <h1>Compliance</h1>
-  <p class="small">Thursday, 11/12/2026</p>
+  <p class="small">Sunday, 11/15/2026</p>
 
-  <!-- ── Deadline alerts ──────────────────────────────────────────────────── -->
   <div class="card">
     <div class="row spread">
       <h2 style="margin:0">Deadline alerts (0)</h2>
       <span class="small">In-system alerts only &middot; no email or push</span>
     </div>
-    
-
-    
 
     <p class="small" style="margin:.5rem 0">
       No alerts yet. The deadline check runs nightly at 12:00 a.m. CT, or an administrator can run it now.
     </p>
 
-    <!-- Flagged overdue -->
     <div style="margin-top:.75rem">
       <div class="small" style="margin-bottom:.25rem">Flagged overdue (no reminder sent):</div>
       <ul class="alist">
         <li class="aitem danger">
           <div>
             <div class="t">Permanency review – C-1059</div>
-            <div class="small">Due 11/9/2026</div>
+            <div class="small">Due 11/12/2026</div>
           </div>
           <span class="tag danger">Overdue 3 days</span>
         </li>
         <li class="aitem danger">
           <div>
             <div class="t">Home visit (Noah K.) – C-1088</div>
-            <div class="small">Due 11/8/2026</div>
+            <div class="small">Due 11/11/2026</div>
           </div>
           <span class="tag danger">Overdue 4 days</span>
         </li>
@@ -934,9 +1529,6 @@
     </div>
   </div>
 
-  
-
-  <!-- ── My visits ────────────────────────────────────────────────────────── -->
   <div class="card">
     <h2>My visits</h2>
     <div class="tbl-wrap">
@@ -945,114 +1537,15 @@
           <tr><th>Date</th><th>Child</th><th>Case</th><th>Visit</th><th>Status</th></tr>
         </thead>
         <tbody>
-          <tr>
-            <td>9/18</td>
-            <td>Eli M.</td>
-            <td>C-1059</td>
-            <td>Home visit</td>
-            <td>
-              
-              
-              
-              <span class="tag ok">Completed</span>
-            </td>
-          </tr>
-          <tr>
-            <td>9/8</td>
-            <td>Noah K.</td>
-            <td>C-1088</td>
-            <td>Home visit</td>
-            <td>
-              
-              
-              
-              <span class="tag ok">Completed</span>
-            </td>
-          </tr>
-          <tr>
-            <td>10/13</td>
-            <td>Jordan P.</td>
-            <td>C-1042</td>
-            <td>Home visit</td>
-            <td>
-              
-              
-              
-              <span class="tag ok">Completed</span>
-            </td>
-          </tr>
-          <tr>
-            <td>10/23</td>
-            <td>Liam T.</td>
-            <td>C-1077</td>
-            <td>School visit</td>
-            <td>
-              
-              
-              
-              <span class="tag ok">Completed</span>
-            </td>
-          </tr>
-          <tr>
-            <td>11/5</td>
-            <td>Mia S.</td>
-            <td>C-1103</td>
-            <td>Home visit</td>
-            <td>
-              
-              
-              
-              <span class="tag ok">Completed</span>
-            </td>
-          </tr>
-          <tr>
-            <td>11/8</td>
-            <td>Noah K.</td>
-            <td>C-1088</td>
-            <td>Home visit</td>
-            <td>
-              <span class="tag danger">Overdue</span>
-              
-              
-              
-            </td>
-          </tr>
-          <tr>
-            <td>11/11</td>
-            <td>Ava R.</td>
-            <td>C-1092</td>
-            <td>School visit</td>
-            <td>
-              
-              <span class="tag danger">Missed</span>
-              
-              
-            </td>
-          </tr>
-          <tr>
-            <td>11/14</td>
-            <td>Jordan P.</td>
-            <td>C-1042</td>
-            <td>Home visit</td>
-            <td>
-              
-              
-              <span class="tag info">Scheduled</span>
-              
-            </td>
-          </tr>
-          <tr>
-            <td>11/18</td>
-            <td>Liam T.</td>
-            <td>C-1077</td>
-            <td>Home visit</td>
-            <td>
-              
-              
-              <span class="tag info">Scheduled</span>
-              
-            </td>
-          </tr>
+          <tr><td>9/21</td><td>Eli M.</td><td>C-1059</td><td>Home visit</td><td><span class="tag ok">Completed</span></td></tr>
+          <tr><td>9/11</td><td>Noah K.</td><td>C-1088</td><td>Home visit</td><td><span class="tag ok">Completed</span></td></tr>
+          <tr><td>10/16</td><td>Jordan P.</td><td>C-1042</td><td>Home visit</td><td><span class="tag ok">Completed</span></td></tr>
+          <tr><td>10/26</td><td>Liam T.</td><td>C-1077</td><td>School visit</td><td><span class="tag ok">Completed</span></td></tr>
+          <tr><td>11/8</td><td>Mia S.</td><td>C-1103</td><td>Home visit</td><td><span class="tag ok">Completed</span></td></tr>
+          <tr><td>11/11</td><td>Noah K.</td><td>C-1088</td><td>Home visit</td><td><span class="tag danger">Overdue</span></td></tr>
+          <tr><td>11/14</td><td>Ava R.</td><td>C-1092</td><td>School visit</td><td><span class="tag danger">Missed</span></td></tr>
+          <tr><td>11/17</td><td>Jordan P.</td><td>C-1042</td><td>Home visit</td><td><span class="tag info">Scheduled</span></td></tr>
+          <tr><td>11/21</td><td>Liam T.</td><td>C-1077</td><td>Home visit</td><td><span class="tag info">Scheduled</span></td></tr>
         </tbody>
       </table>
     </div>
@@ -1062,968 +1555,338 @@
 <div class="badge">Prototype · synthetic data</div>
 </section>
 
-<section id="s-case">
+<!-- ============================================================
+     SCREEN: Supervisor Dashboard (All caseworkers)
+     ============================================================ -->
+<section id="screen-sup-dashboard" class="proto-screen">
 <header class="app-header">
-  <div class="inner">
-    <a class="brand" href="#cw-home">Foster Care Tracking</a>
-    <nav class="nav" aria-label="Main">
-      <a href="#cw-home">My Work</a>
-      <a href="#cw-placements">Placements</a>
-      <a href="#cw-cases"
-         aria-current="page" class=" active">Cases</a>
-      <a href="#cw-compliance">Compliance</a>
-    </nav>
+  <div class="top-row">
+    <a class="brand" href="#screen-sup-dashboard">Foster Care Tracking</a>
     <div class="user">
-      <span><strong>m.garcia</strong> · <span class="role">Caseworker</span></span>
-      <form action="#" method="post" style="display:inline">
-        <button type="submit" style="background:none;border:none;color:#fff;cursor:pointer;font:inherit;text-decoration:underline;padding:0">Sign out</button>
+      <span><strong>k.brown</strong> &middot; <span class="role">Supervisor</span></span>
+      <form style="display:inline" onsubmit="return false;">
+        <button type="button" onclick="location.hash='#screen-login-logout'">Sign out</button>
       </form>
     </div>
   </div>
+  <nav class="nav-tabs" aria-label="Main">
+    <a href="#screen-sup-dashboard">My Work</a>
+    <a href="#screen-sup-dashboard">Placements</a>
+    <a href="#screen-sup-dashboard">Cases</a>
+    <a href="#screen-sup-dashboard" aria-current="page">Compliance</a>
+  </nav>
 </header>
 <main>
 
-  <div class="crumbs">
-    <a href="#cw-home">My cases</a>
-    &rsaquo; <span>C-1088</span>
-  </div>
+  <p class="eyebrow">SUPERVISOR &middot; COMPLIANCE DASHBOARD</p>
 
-  <!-- Flash: Placement ended successfully -->
-  
-
-  <!-- Case header -->
-  <div class="card case-head">
-    <div class="row spread">
-      <h1 style="margin:0">Case C-1088 · Noah K.</h1>
-      <span class="tag info">Status: <span>Open</span></span>
-    </div>
-    <dl>
-      <div><dt>Case ID</dt>    <dd>C-1088</dd></div>
-      <div><dt>Child</dt>      <dd>Noah K. (ID 2231)</dd></div>
-      <div><dt>Status</dt>     <dd>Open</dd></div>
-      <div><dt>Assigned caseworker</dt>
-           <dd>Maria Garcia</dd></div>
-    </dl>
-  </div>
-
-  <!-- Current placement -->
-  <div class="card">
-    <h2>Current placement</h2>
-
-    <!-- Active placement -->
+  <div class="row spread" style="align-items:flex-end;margin-bottom:1rem">
     <div>
-      <div class="placement-box">
-        <div>
-          <div class="big">Patel Home – since 3/14/2025</div>
-          <div class="small">Irving, TX · Placement ID P-1</div>
-        </div>
-      </div>
-      <div class="actions">
-        <a class="btn"
-           href="#end">
-          End placement
-        </a>
-        <a class="btn" aria-disabled="true"
-           title="End the current placement first"
-           href="#">New placement</a>
-      </div>
-      <p class="hint">End the current placement before creating a new one.</p>
+      <h1>Compliance dashboard</h1>
+      <div class="small">Visits and deadlines &middot; all caseworkers</div>
     </div>
-
-    <!-- No active placement -->
-    
-  </div>
-
-  <p><a href="#timeline">View case timeline</a></p>
-
-</main>
-<div class="badge">Prototype · synthetic data</div>
-</section>
-
-<section id="s-end-error">
-<header class="app-header">
-  <div class="inner">
-    <a class="brand" href="#cw-home">Foster Care Tracking</a>
-    <nav class="nav" aria-label="Main">
-      <a href="#cw-home">My Work</a>
-      <a href="#cw-placements"
-         aria-current="page" class=" active">Placements</a>
-      <a href="#cw-cases">Cases</a>
-      <a href="#cw-compliance">Compliance</a>
-    </nav>
-    <div class="user">
-      <span><strong>m.garcia</strong> · <span class="role">Caseworker</span></span>
-      <form action="#" method="post" style="display:inline">
-        <button type="submit" style="background:none;border:none;color:#fff;cursor:pointer;font:inherit;text-decoration:underline;padding:0">Sign out</button>
-      </form>
+    <div class="filter">
+      <label for="cwFilter-all">Filter:</label>
+      <select class="select" id="cwFilter-all"
+              onchange="location.hash = this.value">
+        <option value="#screen-sup-dashboard" selected>All caseworkers</option>
+        <option value="#screen-sup-dashboard-garcia">Maria Garcia</option>
+        <option value="#screen-sup-dashboard">David Lee</option>
+        <option value="#screen-sup-dashboard">Priya Shah</option>
+        <option value="#screen-sup-dashboard">Tom Becker</option>
+        <option value="#screen-sup-dashboard">Ana Lopez</option>
+        <option value="#screen-sup-dashboard">Chris Ward</option>
+      </select>
     </div>
   </div>
-</header>
-<main>
 
-  <div class="crumbs">
-    <a href="#cw-home">My cases</a>
-    &rsaquo; <a href="#case">C-1088</a>
-    &rsaquo; End placement
-  </div>
-
-  <div class="card narrow">
-    <h1>End placement</h1>
-    <p class="small">Noah K. (ID 2231) · Patel Home – since 3/14/2025</p>
-
-    <!-- Inline validation error -->
-    <div class="alert danger" role="alert">
-      <span class="lbl">Error:</span>
-      <span>Enter a reason for the placement change.</span>
+  <div class="stats">
+    <div class="stat">
+      <div class="k">On track</div>
+      <div class="n">77.8%</div>
+      <div class="small">21 of 27 items</div>
+      <span class="tag ok">On track</span>
     </div>
-
-    <form action="#"
-          method="post">
-
-      <div class="field">
-        <label for="endDate">End date <span class="req">*</span></label>
-        <input class="input" id="endDate" type="text"
-               value="11/12/2026" readonly>
-      </div>
-
-      <div class="field">
-        <label for="reason">Reason for placement change <span class="req">*</span></label>
-        <textarea class="input  invalid"
-                  id="reason" name="reason"
-                  aria-invalid="true" aria-describedby="reasonErr"></textarea>
-        <div class="err" id="reasonErr">Enter a reason for the placement change.</div>
-      </div>
-
-      <div class="actions">
-        <button type="submit" class="btn">Confirm end of placement</button>
-        <a class="btn secondary"
-           href="#case">Cancel</a>
-      </div>
-    </form>
-  </div>
-
-</main>
-<div class="badge">Prototype · synthetic data</div>
-</section>
-
-<section id="s-end">
-<header class="app-header">
-  <div class="inner">
-    <a class="brand" href="#cw-home">Foster Care Tracking</a>
-    <nav class="nav" aria-label="Main">
-      <a href="#cw-home">My Work</a>
-      <a href="#cw-placements"
-         aria-current="page" class=" active">Placements</a>
-      <a href="#cw-cases">Cases</a>
-      <a href="#cw-compliance">Compliance</a>
-    </nav>
-    <div class="user">
-      <span><strong>m.garcia</strong> · <span class="role">Caseworker</span></span>
-      <form action="#" method="post" style="display:inline">
-        <button type="submit" style="background:none;border:none;color:#fff;cursor:pointer;font:inherit;text-decoration:underline;padding:0">Sign out</button>
-      </form>
+    <div class="stat">
+      <div class="k">Overdue</div>
+      <div class="n">22.2%</div>
+      <div class="small">6 items</div>
+      <span class="tag danger">Overdue</span>
+    </div>
+    <div class="stat">
+      <div class="k">Due in 7 days</div>
+      <div class="n">4</div>
+      <div class="small">items</div>
+      <span class="tag info">Upcoming</span>
+    </div>
+    <div class="stat">
+      <div class="k">Missed visits (30 days)</div>
+      <div class="n">1</div>
+      <div class="small">visits</div>
+      <span class="tag danger">Missed</span>
     </div>
   </div>
-</header>
-<main>
 
-  <div class="crumbs">
-    <a href="#cw-home">My cases</a>
-    &rsaquo; <a href="#case">C-1088</a>
-    &rsaquo; End placement
-  </div>
-
-  <div class="card narrow">
-    <h1>End placement</h1>
-    <p class="small">Noah K. (ID 2231) · Patel Home – since 3/14/2025</p>
-
-    <!-- Inline validation error -->
-    
-
-    <form action="#"
-          method="post">
-
-      <div class="field">
-        <label for="endDate">End date <span class="req">*</span></label>
-        <input class="input" id="endDate" type="text"
-               value="11/12/2026" readonly>
-      </div>
-
-      <div class="field">
-        <label for="reason">Reason for placement change <span class="req">*</span></label>
-        <textarea class="input"
-                  id="reason" name="reason">Foster family relocating out of state</textarea>
-        
-      </div>
-
-      <div class="actions">
-        <button type="submit" class="btn">Confirm end of placement</button>
-        <a class="btn secondary"
-           href="#case">Cancel</a>
-      </div>
-    </form>
-  </div>
-
-</main>
-<div class="badge">Prototype · synthetic data</div>
-</section>
-
-<section id="s-ended">
-<header class="app-header">
-  <div class="inner">
-    <a class="brand" href="#cw-home">Foster Care Tracking</a>
-    <nav class="nav" aria-label="Main">
-      <a href="#cw-home">My Work</a>
-      <a href="#cw-placements">Placements</a>
-      <a href="#cw-cases"
-         aria-current="page" class=" active">Cases</a>
-      <a href="#cw-compliance">Compliance</a>
-    </nav>
-    <div class="user">
-      <span><strong>m.garcia</strong> · <span class="role">Caseworker</span></span>
-      <form action="#" method="post" style="display:inline">
-        <button type="submit" style="background:none;border:none;color:#fff;cursor:pointer;font:inherit;text-decoration:underline;padding:0">Sign out</button>
-      </form>
-    </div>
-  </div>
-</header>
-<main>
-
-  <div class="crumbs">
-    <a href="#cw-home">My cases</a>
-    &rsaquo; <span>C-1088</span>
-  </div>
-
-  <!-- Flash: Placement ended successfully -->
-  <div class="alert ok" role="status">
-    <span class="lbl">Success:</span>
-    <span>Placement at Patel Home ended on 11/12/2026. Event logged to the case timeline.</span>
-  </div>
-
-  <!-- Case header -->
-  <div class="card case-head">
-    <div class="row spread">
-      <h1 style="margin:0">Case C-1088 · Noah K.</h1>
-      <span class="tag info">Status: <span>Open</span></span>
-    </div>
-    <dl>
-      <div><dt>Case ID</dt>    <dd>C-1088</dd></div>
-      <div><dt>Child</dt>      <dd>Noah K. (ID 2231)</dd></div>
-      <div><dt>Status</dt>     <dd>Open</dd></div>
-      <div><dt>Assigned caseworker</dt>
-           <dd>Maria Garcia</dd></div>
-    </dl>
-  </div>
-
-  <!-- Current placement -->
   <div class="card">
-    <h2>Current placement</h2>
+    <h2>On track vs. overdue</h2>
+    <div class="split" role="img" aria-label="77.8 percent on track, 22.2 percent overdue">
+      <span class="a" style="width:77.8%"></span>
+      <span class="b" style="width:22.2%"></span>
+    </div>
+    <div class="row small">
+      <span><span class="tag ok">On track</span> <span>77.8% (21)</span></span>
+      <span><span class="tag danger">Overdue</span> <span>22.2% (6)</span></span>
+    </div>
+    <p class="small" style="margin-bottom:0"><code class="m">ComplianceScheduler.calculateOnTrackRate()</code></p>
+  </div>
 
-    <!-- Active placement -->
-    
+  <div class="card">
+    <h2>By caseworker</h2>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Caseworker</th><th>Cases</th><th>On-track rate</th><th>Overdue items</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><a href="#screen-sup-dashboard-garcia">Maria Garcia</a></td>
+            <td>6</td>
+            <td>
+              <div class="rate">
+                <div class="bar warn" role="img" aria-label="78.6 percent"><span style="width:78.6%"></span></div>
+                <strong>78.6%</strong>
+                <span class="tag warn">Needs attention</span>
+              </div>
+            </td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <td><a href="#screen-sup-dashboard">David Lee</a></td>
+            <td>1</td>
+            <td>
+              <div class="rate">
+                <div class="bar ok" role="img" aria-label="100.0 percent"><span style="width:100%"></span></div>
+                <strong>100.0%</strong>
+                <span class="tag ok">On target</span>
+              </div>
+            </td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td><a href="#screen-sup-dashboard">Priya Shah</a></td>
+            <td>1</td>
+            <td>
+              <div class="rate">
+                <div class="bar ok" role="img" aria-label="100.0 percent"><span style="width:100%"></span></div>
+                <strong>100.0%</strong>
+                <span class="tag ok">On target</span>
+              </div>
+            </td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td><a href="#screen-sup-dashboard">Tom Becker</a></td>
+            <td>3</td>
+            <td>
+              <div class="rate">
+                <div class="bar danger" role="img" aria-label="40.0 percent"><span style="width:40%"></span></div>
+                <strong>40.0%</strong>
+                <span class="tag danger">Below target</span>
+              </div>
+            </td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <td><a href="#screen-sup-dashboard">Ana Lopez</a></td>
+            <td>1</td>
+            <td>
+              <div class="rate">
+                <div class="bar ok" role="img" aria-label="100.0 percent"><span style="width:100%"></span></div>
+                <strong>100.0%</strong>
+                <span class="tag ok">On target</span>
+              </div>
+            </td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td><a href="#screen-sup-dashboard">Chris Ward</a></td>
+            <td>1</td>
+            <td>
+              <div class="rate">
+                <div class="bar ok" role="img" aria-label="100.0 percent"><span style="width:100%"></span></div>
+                <strong>100.0%</strong>
+                <span class="tag ok">On target</span>
+              </div>
+            </td>
+            <td>0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="legend">
+      <span class="tag ok">On target: 90% or more</span>
+      <span class="tag warn">Needs attention: 70–89%</span>
+      <span class="tag danger">Below target: under 70%</span>
+    </div>
+  </div>
 
-    <!-- No active placement -->
+</main>
+<div class="badge">Prototype · synthetic data</div>
+</section>
+
+<!-- ============================================================
+     SCREEN: Supervisor Dashboard (Filtered: Maria Garcia)
+     ============================================================ -->
+<section id="screen-sup-dashboard-garcia" class="proto-screen">
+<header class="app-header">
+  <div class="top-row">
+    <a class="brand" href="#screen-sup-dashboard">Foster Care Tracking</a>
+    <div class="user">
+      <span><strong>k.brown</strong> &middot; <span class="role">Supervisor</span></span>
+      <form style="display:inline" onsubmit="return false;">
+        <button type="button" onclick="location.hash='#screen-login-logout'">Sign out</button>
+      </form>
+    </div>
+  </div>
+  <nav class="nav-tabs" aria-label="Main">
+    <a href="#screen-sup-dashboard">My Work</a>
+    <a href="#screen-sup-dashboard">Placements</a>
+    <a href="#screen-sup-dashboard">Cases</a>
+    <a href="#screen-sup-dashboard-garcia" aria-current="page">Compliance</a>
+  </nav>
+</header>
+<main>
+
+  <p class="eyebrow">SUPERVISOR &middot; COMPLIANCE DASHBOARD</p>
+
+  <div class="row spread" style="align-items:flex-end;margin-bottom:1rem">
     <div>
-      <div class="placement-box">
+      <h1>Compliance dashboard</h1>
+      <div class="small">
+        Filtered: <span>Maria Garcia</span>
+        &middot; <code class="m">filterByCaseworker()</code>
+        &middot; <a href="#screen-sup-dashboard">Clear filter</a>
+      </div>
+    </div>
+    <div class="filter">
+      <label for="cwFilter-garcia">Filter:</label>
+      <select class="select" id="cwFilter-garcia"
+              onchange="location.hash = this.value">
+        <option value="#screen-sup-dashboard">All caseworkers</option>
+        <option value="#screen-sup-dashboard-garcia" selected>Maria Garcia</option>
+        <option value="#screen-sup-dashboard">David Lee</option>
+        <option value="#screen-sup-dashboard">Priya Shah</option>
+        <option value="#screen-sup-dashboard">Tom Becker</option>
+        <option value="#screen-sup-dashboard">Ana Lopez</option>
+        <option value="#screen-sup-dashboard">Chris Ward</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="k">On track</div>
+      <div class="n">78.6%</div>
+      <div class="small">4 of 6 items (est.)</div>
+      <span class="tag warn">Needs attention (70–89%)</span>
+    </div>
+    <div class="stat">
+      <div class="k">Overdue items</div>
+      <div class="n">3</div>
+      <div class="small">items</div>
+      <span class="tag danger">Overdue</span>
+    </div>
+    <div class="stat">
+      <div class="k">Cases</div>
+      <div class="n">6</div>
+      <div class="small">open cases</div>
+      <span class="tag neutral">Assigned</span>
+    </div>
+    <div class="stat">
+      <div class="k">Missed visits (30 days)</div>
+      <div class="n">1</div>
+      <div class="small">visit</div>
+      <span class="tag danger">Missed</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>On-track rate</h2>
+    <div class="rate">
+      <div class="bar warn" role="img" style="width:100%;max-width:420px" aria-label="78.6 percent">
+        <span style="width:78.6%"></span>
+      </div>
+      <strong>78.6%</strong>
+      <span class="tag warn">Needs attention (70–89%)</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Overdue items (3)</h2>
+    <ul class="alist">
+      <li class="aitem danger">
         <div>
-          <div class="big">No active placement</div>
-          
+          <div class="t">Permanency review – C-1059</div>
+          <div class="small">Due 11/12/2026</div>
         </div>
-        <span class="tag warn">Needs placement</span>
-      </div>
-      <div class="actions">
-        <a class="btn" aria-disabled="true" href="#">End placement</a>
-        <a class="btn"
-           href="#select-home">
-          New placement
-        </a>
-      </div>
-    </div>
+        <span class="tag danger">Overdue 3 days</span>
+      </li>
+      <li class="aitem danger">
+        <div>
+          <div class="t">Home visit – Noah K. (C-1088)</div>
+          <div class="small">Scheduled 11/11/2026</div>
+        </div>
+        <span class="tag danger">Overdue since 11/11</span>
+      </li>
+      <li class="aitem danger">
+        <div>
+          <div class="t">School visit – Ava R. (C-1092)</div>
+          <div class="small">Scheduled 11/14/2026</div>
+        </div>
+        <span class="tag danger">Missed</span>
+      </li>
+    </ul>
   </div>
-
-  <p><a href="#timeline">View case timeline</a></p>
 
 </main>
 <div class="badge">Prototype · synthetic data</div>
 </section>
 
-<section id="s-select-home">
+<!-- ============================================================
+     SCREEN: Admin Scheduler (Before Run)
+     ============================================================ -->
+<section id="screen-admin-scheduler" class="proto-screen">
 <header class="app-header">
-  <div class="inner">
-    <a class="brand" href="#cw-home">Foster Care Tracking</a>
-    <nav class="nav" aria-label="Main">
-      <a href="#cw-home">My Work</a>
-      <a href="#cw-placements"
-         aria-current="page" class=" active">Placements</a>
-      <a href="#cw-cases">Cases</a>
-      <a href="#cw-compliance">Compliance</a>
-    </nav>
+  <div class="top-row">
+    <a class="brand" href="#screen-admin-scheduler">Foster Care Tracking</a>
     <div class="user">
-      <span><strong>m.garcia</strong> · <span class="role">Caseworker</span></span>
-      <form action="#" method="post" style="display:inline">
-        <button type="submit" style="background:none;border:none;color:#fff;cursor:pointer;font:inherit;text-decoration:underline;padding:0">Sign out</button>
+      <span><strong>admin</strong> &middot; <span class="role">Administrator</span></span>
+      <form style="display:inline" onsubmit="return false;">
+        <button type="button" onclick="location.hash='#screen-login-logout'">Sign out</button>
       </form>
     </div>
   </div>
-</header>
-<main>
-
-  <div class="crumbs">
-    <a href="#cw-home">My cases</a>
-    &rsaquo; <a href="#case">C-1088</a>
-    &rsaquo; New placement
-  </div>
-  <h1>New placement – select foster home</h1>
-
-  <!-- Rejection alert (flash) -->
-  
-
-  <!-- Child + start date pre-fill -->
-  <div class="card">
-    <div class="row" style="align-items:flex-start">
-      <div class="field" style="flex:1 1 220px;margin:0">
-        <label>Child</label>
-        <input class="input"
-               value="Noah K. (ID 2231)"
-               readonly>
-      </div>
-      <div class="field" style="flex:1 1 220px;margin:0">
-        <label>Start date</label>
-        <input class="input" value="11/12/2026" readonly>
-      </div>
-    </div>
-  </div>
-
-  <h2>Foster homes</h2>
-  <p class="small">Select a home. Capacity is checked before the placement is saved.</p>
-
-  <!--
-    One form wraps all home cards.
-    Each <button type="submit" name="homeId" value="{id}"> submits only its own homeId.
-    Full homes are still clickable — the server rejects them (FR-5).
-  -->
-  <form action="#"
-        method="post">
-    <div class="homes">
-      <button type="submit" name="homeId" value="6"
-              class="home"
-              style="text-align:left;cursor:pointer;font:inherit">
-
-        <div class="row spread">
-          <span class="name">Cedar Home</span>
-          <span>
-            <!-- Show "Selected" badge for the rejected home -->
-            
-            
-            <span class="tag ok">Available</span>
-          </span>
-        </div>
-
-        <div class="small">Mesquite, TX</div>
-
-        <div class="bar" role="img" aria-label="2 of 3 beds used">
-          <span style="width:67%"></span>
-        </div>
-
-        <div class="cap">
-          <span>2 of 3 beds used</span>
-          <span>1 bed open</span>
-          
-        </div>
-      </button><button type="submit" name="homeId" value="2"
-              class="home"
-              style="text-align:left;cursor:pointer;font:inherit">
-
-        <div class="row spread">
-          <span class="name">Johnson Home</span>
-          <span>
-            <!-- Show "Selected" badge for the rejected home -->
-            
-            
-            <span class="tag ok">Available</span>
-          </span>
-        </div>
-
-        <div class="small">Richardson, TX</div>
-
-        <div class="bar" role="img" aria-label="2 of 4 beds used">
-          <span style="width:50%"></span>
-        </div>
-
-        <div class="cap">
-          <span>2 of 4 beds used</span>
-          <span>2 beds open</span>
-          
-        </div>
-      </button><button type="submit" name="homeId" value="3"
-              class="home"
-              style="text-align:left;cursor:pointer;font:inherit">
-
-        <div class="row spread">
-          <span class="name">Nguyen Family Home</span>
-          <span>
-            <!-- Show "Selected" badge for the rejected home -->
-            
-            
-            <span class="tag ok">Available</span>
-          </span>
-        </div>
-
-        <div class="small">Plano, TX</div>
-
-        <div class="bar" role="img" aria-label="2 of 3 beds used">
-          <span style="width:67%"></span>
-        </div>
-
-        <div class="cap">
-          <span>2 of 3 beds used</span>
-          <span>1 bed open</span>
-          
-        </div>
-      </button><button type="submit" name="homeId" value="1"
-              class="home"
-              style="text-align:left;cursor:pointer;font:inherit">
-
-        <div class="row spread">
-          <span class="name">Patel Home</span>
-          <span>
-            <!-- Show "Selected" badge for the rejected home -->
-            
-            
-            <span class="tag ok">Available</span>
-          </span>
-        </div>
-
-        <div class="small">Irving, TX</div>
-
-        <div class="bar" role="img" aria-label="2 of 4 beds used">
-          <span style="width:50%"></span>
-        </div>
-
-        <div class="cap">
-          <span>2 of 4 beds used</span>
-          <span>2 beds open</span>
-          
-        </div>
-      </button><button type="submit" name="homeId" value="4"
-              class="home"
-              style="text-align:left;cursor:pointer;font:inherit">
-
-        <div class="row spread">
-          <span class="name">Rivera Family Home</span>
-          <span>
-            <!-- Show "Selected" badge for the rejected home -->
-            
-            <span class="tag danger">Full</span>
-            
-          </span>
-        </div>
-
-        <div class="small">Garland, TX</div>
-
-        <div class="bar  full" role="img" aria-label="4 of 4 beds used, full">
-          <span style="width:100%"></span>
-        </div>
-
-        <div class="cap">
-          <span>4 of 4 beds used</span>
-          
-          <span>0 beds open</span>
-        </div>
-      </button><button type="submit" name="homeId" value="5"
-              class="home"
-              style="text-align:left;cursor:pointer;font:inherit">
-
-        <div class="row spread">
-          <span class="name">Smith Home</span>
-          <span>
-            <!-- Show "Selected" badge for the rejected home -->
-            
-            <span class="tag danger">Full</span>
-            
-          </span>
-        </div>
-
-        <div class="small">Dallas, TX</div>
-
-        <div class="bar  full" role="img" aria-label="2 of 2 beds used, full">
-          <span style="width:100%"></span>
-        </div>
-
-        <div class="cap">
-          <span>2 of 2 beds used</span>
-          
-          <span>0 beds open</span>
-        </div>
-      </button>
-    </div>
-  </form>
-
-</main>
-<div class="badge">Prototype · synthetic data</div>
-</section>
-
-<section id="s-rejected">
-<header class="app-header">
-  <div class="inner">
-    <a class="brand" href="#cw-home">Foster Care Tracking</a>
-    <nav class="nav" aria-label="Main">
-      <a href="#cw-home">My Work</a>
-      <a href="#cw-placements"
-         aria-current="page" class=" active">Placements</a>
-      <a href="#cw-cases">Cases</a>
-      <a href="#cw-compliance">Compliance</a>
-    </nav>
-    <div class="user">
-      <span><strong>m.garcia</strong> · <span class="role">Caseworker</span></span>
-      <form action="#" method="post" style="display:inline">
-        <button type="submit" style="background:none;border:none;color:#fff;cursor:pointer;font:inherit;text-decoration:underline;padding:0">Sign out</button>
-      </form>
-    </div>
-  </div>
-</header>
-<main>
-
-  <div class="crumbs">
-    <a href="#cw-home">My cases</a>
-    &rsaquo; <a href="#case">C-1088</a>
-    &rsaquo; New placement
-  </div>
-  <h1>New placement – select foster home</h1>
-
-  <!-- Rejection alert (flash) -->
-  <div class="alert danger" role="alert">
-    <span class="lbl">Rejected:</span>
-    <span>Placement rejected. Rivera Family Home is at maximum capacity (4 of 4). Choose another home.</span>
-  </div>
-
-  <!-- Child + start date pre-fill -->
-  <div class="card">
-    <div class="row" style="align-items:flex-start">
-      <div class="field" style="flex:1 1 220px;margin:0">
-        <label>Child</label>
-        <input class="input"
-               value="Noah K. (ID 2231)"
-               readonly>
-      </div>
-      <div class="field" style="flex:1 1 220px;margin:0">
-        <label>Start date</label>
-        <input class="input" value="11/12/2026" readonly>
-      </div>
-    </div>
-  </div>
-
-  <h2>Foster homes</h2>
-  <p class="small">Select a home. Capacity is checked before the placement is saved.</p>
-
-  <!--
-    One form wraps all home cards.
-    Each <button type="submit" name="homeId" value="{id}"> submits only its own homeId.
-    Full homes are still clickable — the server rejects them (FR-5).
-  -->
-  <form action="#"
-        method="post">
-    <div class="homes">
-      <button type="submit" name="homeId" value="6"
-              class="home"
-              style="text-align:left;cursor:pointer;font:inherit">
-
-        <div class="row spread">
-          <span class="name">Cedar Home</span>
-          <span>
-            <!-- Show "Selected" badge for the rejected home -->
-            
-            
-            <span class="tag ok">Available</span>
-          </span>
-        </div>
-
-        <div class="small">Mesquite, TX</div>
-
-        <div class="bar" role="img" aria-label="2 of 3 beds used">
-          <span style="width:67%"></span>
-        </div>
-
-        <div class="cap">
-          <span>2 of 3 beds used</span>
-          <span>1 bed open</span>
-          
-        </div>
-      </button><button type="submit" name="homeId" value="2"
-              class="home"
-              style="text-align:left;cursor:pointer;font:inherit">
-
-        <div class="row spread">
-          <span class="name">Johnson Home</span>
-          <span>
-            <!-- Show "Selected" badge for the rejected home -->
-            
-            
-            <span class="tag ok">Available</span>
-          </span>
-        </div>
-
-        <div class="small">Richardson, TX</div>
-
-        <div class="bar" role="img" aria-label="2 of 4 beds used">
-          <span style="width:50%"></span>
-        </div>
-
-        <div class="cap">
-          <span>2 of 4 beds used</span>
-          <span>2 beds open</span>
-          
-        </div>
-      </button><button type="submit" name="homeId" value="3"
-              class="home"
-              style="text-align:left;cursor:pointer;font:inherit">
-
-        <div class="row spread">
-          <span class="name">Nguyen Family Home</span>
-          <span>
-            <!-- Show "Selected" badge for the rejected home -->
-            
-            
-            <span class="tag ok">Available</span>
-          </span>
-        </div>
-
-        <div class="small">Plano, TX</div>
-
-        <div class="bar" role="img" aria-label="2 of 3 beds used">
-          <span style="width:67%"></span>
-        </div>
-
-        <div class="cap">
-          <span>2 of 3 beds used</span>
-          <span>1 bed open</span>
-          
-        </div>
-      </button><button type="submit" name="homeId" value="1"
-              class="home"
-              style="text-align:left;cursor:pointer;font:inherit">
-
-        <div class="row spread">
-          <span class="name">Patel Home</span>
-          <span>
-            <!-- Show "Selected" badge for the rejected home -->
-            
-            
-            <span class="tag ok">Available</span>
-          </span>
-        </div>
-
-        <div class="small">Irving, TX</div>
-
-        <div class="bar" role="img" aria-label="2 of 4 beds used">
-          <span style="width:50%"></span>
-        </div>
-
-        <div class="cap">
-          <span>2 of 4 beds used</span>
-          <span>2 beds open</span>
-          
-        </div>
-      </button><button type="submit" name="homeId" value="4"
-              class="home  selected"
-              style="text-align:left;cursor:pointer;font:inherit">
-
-        <div class="row spread">
-          <span class="name">Rivera Family Home</span>
-          <span>
-            <!-- Show "Selected" badge for the rejected home -->
-            <span class="tag info" style="color:var(--teal-dark);background:var(--info-bg)">
-              Selected
-            </span>
-            <span class="tag danger">Full</span>
-            
-          </span>
-        </div>
-
-        <div class="small">Garland, TX</div>
-
-        <div class="bar  full" role="img" aria-label="4 of 4 beds used, full">
-          <span style="width:100%"></span>
-        </div>
-
-        <div class="cap">
-          <span>4 of 4 beds used</span>
-          
-          <span>0 beds open</span>
-        </div>
-      </button><button type="submit" name="homeId" value="5"
-              class="home"
-              style="text-align:left;cursor:pointer;font:inherit">
-
-        <div class="row spread">
-          <span class="name">Smith Home</span>
-          <span>
-            <!-- Show "Selected" badge for the rejected home -->
-            
-            <span class="tag danger">Full</span>
-            
-          </span>
-        </div>
-
-        <div class="small">Dallas, TX</div>
-
-        <div class="bar  full" role="img" aria-label="2 of 2 beds used, full">
-          <span style="width:100%"></span>
-        </div>
-
-        <div class="cap">
-          <span>2 of 2 beds used</span>
-          
-          <span>0 beds open</span>
-        </div>
-      </button>
-    </div>
-  </form>
-
-</main>
-<div class="badge">Prototype · synthetic data</div>
-</section>
-
-<section id="s-saved">
-<header class="app-header">
-  <div class="inner">
-    <a class="brand" href="#cw-home">Foster Care Tracking</a>
-    <nav class="nav" aria-label="Main">
-      <a href="#cw-home">My Work</a>
-      <a href="#cw-placements">Placements</a>
-      <a href="#cw-cases"
-         aria-current="page" class=" active">Cases</a>
-      <a href="#cw-compliance">Compliance</a>
-    </nav>
-    <div class="user">
-      <span><strong>m.garcia</strong> · <span class="role">Caseworker</span></span>
-      <form action="#" method="post" style="display:inline">
-        <button type="submit" style="background:none;border:none;color:#fff;cursor:pointer;font:inherit;text-decoration:underline;padding:0">Sign out</button>
-      </form>
-    </div>
-  </div>
-</header>
-<main>
-
-  <div class="crumbs">
-    <a href="#cw-home">My cases</a>
-    &rsaquo; <a href="#case">C-1088</a>
-    &rsaquo; Timeline
-  </div>
-
-  <!-- Flash: Placement saved successfully -->
-  <div class="alert ok" role="status">
-    <span class="lbl">Success:</span>
-    <span>Placement saved. Johnson Home now has 3 of 4 beds used. Event logged to the case timeline.</span>
-  </div>
-
-  <!-- Case header -->
-  <div class="card case-head">
-    <div class="row spread">
-      <h1 style="margin:0">Case C-1088 · Noah K.</h1>
-      <span class="tag info">Status: <span>Open</span></span>
-    </div>
-    <dl>
-      <div><dt>Case ID</dt>          <dd>C-1088</dd></div>
-      <div><dt>Child</dt>            <dd>Noah K. (ID 2231)</dd></div>
-      <div><dt>Current placement</dt>
-           <dd>Johnson Home – since 11/12/2026</dd>
-           
-      </div>
-      <div><dt>Assigned caseworker</dt>
-           <dd>Maria Garcia</dd></div>
-    </dl>
-  </div>
-
-  <!-- Timeline -->
-  <div class="card">
-    <div class="row spread" style="margin-bottom:1rem">
-      <div>
-        <h2 style="margin:0">Case timeline</h2>
-        <div class="small">Newest first · read-only</div>
-      </div>
-      <a href="#" onclick="return false" title="Not available in this build">Export as PDF</a>
-    </div>
-
-    <ol class="timeline">
-      <li>
-        <div class="when">11/12/2026 23:26 · M. Garcia</div>
-        <div>Placement started: Johnson Home</div>
-        <span class="tag info new">Logged automatically</span>
-      </li>
-      <li>
-        <div class="when">11/12/2026 23:26 · M. Garcia</div>
-        <div>Placement ended: Patel Home (reason: foster family relocating out of state)</div>
-        <span class="tag info new">Logged automatically</span>
-      </li>
-      <li>
-        <div class="when">10/8/2026 14:05 · M. Garcia</div>
-        <div>Home visit completed, notes added</div>
-        <span class="tag info new">Logged automatically</span>
-      </li>
-      <li>
-        <div class="when">9/3/2026 10:30 · M. Garcia</div>
-        <div>Service plan review completed</div>
-        <span class="tag info new">Logged automatically</span>
-      </li>
-      <li>
-        <div class="when">3/14/2025 11:22 · K. Brown (Supervisor)</div>
-        <div>Placement started: Patel Home</div>
-        <span class="tag info new">Logged automatically</span>
-      </li>
-    </ol>
-
-    
-  </div>
-
-  <a class="btn secondary" href="#cw-home">Back to My cases</a>
-
-</main>
-<div class="badge">Prototype · synthetic data</div>
-</section>
-
-<section id="s-timeline">
-<header class="app-header">
-  <div class="inner">
-    <a class="brand" href="#cw-home">Foster Care Tracking</a>
-    <nav class="nav" aria-label="Main">
-      <a href="#cw-home">My Work</a>
-      <a href="#cw-placements">Placements</a>
-      <a href="#cw-cases"
-         aria-current="page" class=" active">Cases</a>
-      <a href="#cw-compliance">Compliance</a>
-    </nav>
-    <div class="user">
-      <span><strong>m.garcia</strong> · <span class="role">Caseworker</span></span>
-      <form action="#" method="post" style="display:inline">
-        <button type="submit" style="background:none;border:none;color:#fff;cursor:pointer;font:inherit;text-decoration:underline;padding:0">Sign out</button>
-      </form>
-    </div>
-  </div>
-</header>
-<main>
-
-  <div class="crumbs">
-    <a href="#cw-home">My cases</a>
-    &rsaquo; <a href="#case">C-1088</a>
-    &rsaquo; Timeline
-  </div>
-
-  <!-- Flash: Placement saved successfully -->
-  
-
-  <!-- Case header -->
-  <div class="card case-head">
-    <div class="row spread">
-      <h1 style="margin:0">Case C-1088 · Noah K.</h1>
-      <span class="tag info">Status: <span>Open</span></span>
-    </div>
-    <dl>
-      <div><dt>Case ID</dt>          <dd>C-1088</dd></div>
-      <div><dt>Child</dt>            <dd>Noah K. (ID 2231)</dd></div>
-      <div><dt>Current placement</dt>
-           <dd>Johnson Home – since 11/12/2026</dd>
-           
-      </div>
-      <div><dt>Assigned caseworker</dt>
-           <dd>Maria Garcia</dd></div>
-    </dl>
-  </div>
-
-  <!-- Timeline -->
-  <div class="card">
-    <div class="row spread" style="margin-bottom:1rem">
-      <div>
-        <h2 style="margin:0">Case timeline</h2>
-        <div class="small">Newest first · read-only</div>
-      </div>
-      <a href="#" onclick="return false" title="Not available in this build">Export as PDF</a>
-    </div>
-
-    <ol class="timeline">
-      <li>
-        <div class="when">11/12/2026 23:26 · M. Garcia</div>
-        <div>Placement started: Johnson Home</div>
-        <span class="tag info new">Logged automatically</span>
-      </li>
-      <li>
-        <div class="when">11/12/2026 23:26 · M. Garcia</div>
-        <div>Placement ended: Patel Home (reason: foster family relocating out of state)</div>
-        <span class="tag info new">Logged automatically</span>
-      </li>
-      <li>
-        <div class="when">10/8/2026 14:05 · M. Garcia</div>
-        <div>Home visit completed, notes added</div>
-        <span class="tag info new">Logged automatically</span>
-      </li>
-      <li>
-        <div class="when">9/3/2026 10:30 · M. Garcia</div>
-        <div>Service plan review completed</div>
-        <span class="tag info new">Logged automatically</span>
-      </li>
-      <li>
-        <div class="when">3/14/2025 11:22 · K. Brown (Supervisor)</div>
-        <div>Placement started: Patel Home</div>
-        <span class="tag info new">Logged automatically</span>
-      </li>
-    </ol>
-
-    
-  </div>
-
-  <a class="btn secondary" href="#cw-home">Back to My cases</a>
-
-</main>
-<div class="badge">Prototype · synthetic data</div>
-</section>
-
-<section id="s-scheduler">
-<header class="app-header">
-  <div class="inner">
-    <a class="brand" href="#cw-home">Foster Care Tracking</a>
-    <nav class="nav" aria-label="Main">
-      <a href="#cw-home">My Work</a>
-      <a href="#cw-placements">Placements</a>
-      <a href="#cw-cases">Cases</a>
-      <a href="#cw-compliance"
-         aria-current="page" class=" active">Compliance</a>
-    </nav>
-    <div class="user">
-      <span><strong>admin</strong> · <span class="role">Administrator</span></span>
-      <form action="#" method="post" style="display:inline">
-        <button type="submit" style="background:none;border:none;color:#fff;cursor:pointer;font:inherit;text-decoration:underline;padding:0">Sign out</button>
-      </form>
-    </div>
-  </div>
+  <nav class="nav-tabs" aria-label="Main">
+    <a href="#screen-admin-scheduler">My Work</a>
+    <a href="#screen-admin-scheduler">Placements</a>
+    <a href="#screen-admin-scheduler">Cases</a>
+    <a href="#screen-admin-scheduler" aria-current="page">Compliance</a>
+  </nav>
 </header>
 <main>
 
   <div class="crumbs">Compliance &rsaquo; Scheduler runs</div>
+  <p class="eyebrow">ADMINISTRATOR &middot; SCHEDULER</p>
   <h1>Nightly deadline check</h1>
 
-  <!-- Flash: run just completed -->
-  
-
-  <!-- Summary card -->
   <div class="card">
     <div class="row spread">
       <div>
         <div class="small"><code class="m">ComplianceScheduler.checkDeadlines()</code> &middot; runs every night at 12:00 a.m. CT</div>
-        
         <div class="small">Not run yet this session. Click "Run check now" to start.</div>
       </div>
-      
       <span class="tag neutral">Not run</span>
     </div>
   </div>
 
-  <!-- Stat cards (only after a run) -->
-  
-
-  <!-- Deadlines table (only after a run) -->
-  
-
-  <!-- Alert rules -->
   <div class="card">
     <h2>Alert rules</h2>
     <ul class="rules">
@@ -2034,62 +1897,54 @@
     </ul>
   </div>
 
-  <!-- Run now button -->
-  <form method="post" action="#">
-    
-    <button type="submit" class="btn">Run check now</button>
-  </form>
-
-  
+  <a href="#screen-admin-scheduler-after" class="btn">Run check now</a>
 
 </main>
 <div class="badge">Prototype · synthetic data</div>
 </section>
 
-<section id="s-scheduler-run">
+<!-- ============================================================
+     SCREEN: Admin Scheduler (After Run)
+     ============================================================ -->
+<section id="screen-admin-scheduler-after" class="proto-screen">
 <header class="app-header">
-  <div class="inner">
-    <a class="brand" href="#cw-home">Foster Care Tracking</a>
-    <nav class="nav" aria-label="Main">
-      <a href="#cw-home">My Work</a>
-      <a href="#cw-placements">Placements</a>
-      <a href="#cw-cases">Cases</a>
-      <a href="#cw-compliance"
-         aria-current="page" class=" active">Compliance</a>
-    </nav>
+  <div class="top-row">
+    <a class="brand" href="#screen-admin-scheduler">Foster Care Tracking</a>
     <div class="user">
-      <span><strong>admin</strong> · <span class="role">Administrator</span></span>
-      <form action="#" method="post" style="display:inline">
-        <button type="submit" style="background:none;border:none;color:#fff;cursor:pointer;font:inherit;text-decoration:underline;padding:0">Sign out</button>
+      <span><strong>admin</strong> &middot; <span class="role">Administrator</span></span>
+      <form style="display:inline" onsubmit="return false;">
+        <button type="button" onclick="location.hash='#screen-login-logout'">Sign out</button>
       </form>
     </div>
   </div>
+  <nav class="nav-tabs" aria-label="Main">
+    <a href="#screen-admin-scheduler">My Work</a>
+    <a href="#screen-admin-scheduler">Placements</a>
+    <a href="#screen-admin-scheduler">Cases</a>
+    <a href="#screen-admin-scheduler-after" aria-current="page">Compliance</a>
+  </nav>
 </header>
 <main>
 
   <div class="crumbs">Compliance &rsaquo; Scheduler runs</div>
+  <p class="eyebrow">ADMINISTRATOR &middot; SCHEDULER</p>
   <h1>Nightly deadline check</h1>
 
-  <!-- Flash: run just completed -->
   <div class="alert ok" role="status">
     <span class="lbl">Done:</span>
-    <span>Check complete: 3 alerts sent, 4 items flagged overdue.</span>
+    <span>Check complete: 0 alerts sent, 4 items flagged overdue.</span>
   </div>
 
-  <!-- Summary card -->
   <div class="card">
     <div class="row spread">
       <div>
         <div class="small"><code class="m">ComplianceScheduler.checkDeadlines()</code> &middot; runs every night at 12:00 a.m. CT</div>
-        <div style="font-size:1.1rem;font-weight:700;color:var(--teal-dark)">Last run 11/12/2026 11:26 PM CT – 3 alerts sent, 4 items flagged overdue</div>
-        
+        <div style="font-size:1.1rem;font-weight:700">Last run 11/15/2026 2:59 AM CT – 0 alerts sent, 4 items flagged overdue</div>
       </div>
       <span class="tag ok">Run completed</span>
-      
     </div>
   </div>
 
-  <!-- Stat cards (only after a run) -->
   <div class="stats">
     <div class="stat">
       <div class="k">Deadlines checked</div>
@@ -2098,7 +1953,7 @@
     </div>
     <div class="stat">
       <div class="k">Alerts sent</div>
-      <div class="n">3</div>
+      <div class="n">0</div>
       <span class="tag info">In-system only</span>
     </div>
     <div class="stat">
@@ -2113,7 +1968,6 @@
     </div>
   </div>
 
-  <!-- Deadlines table (only after a run) -->
   <div class="card">
     <h2>Deadlines checked</h2>
     <div class="tbl-wrap">
@@ -2125,129 +1979,24 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Court report</td>
-            <td>C-1042</td>
-            <td>M. Garcia</td>
-            <td>11/12</td>
-            
-            <td>0 days</td>
-            <td><span class="tag danger">Alert sent (due today)</span></td>
-          </tr>
-          <tr>
-            <td>Service plan review</td>
-            <td>C-1077</td>
-            <td>M. Garcia</td>
-            <td>11/13</td>
-            
-            <td>1 day</td>
-            <td><span class="tag warn">Alert sent</span></td>
-          </tr>
-          <tr>
-            <td>Medical exam record</td>
-            <td>C-1103</td>
-            <td>M. Garcia</td>
-            <td>11/19</td>
-            
-            <td>7 days</td>
-            <td><span class="tag info">Alert sent</span></td>
-          </tr>
-          <tr>
-            <td>School enrollment form</td>
-            <td>C-1088</td>
-            <td>M. Garcia</td>
-            <td>11/17</td>
-            
-            <td>5 days</td>
-            <td><span class="tag neutral">No alert</span></td>
-          </tr>
-          <tr>
-            <td>Court report</td>
-            <td>C-1066</td>
-            <td>D. Lee</td>
-            <td>11/19</td>
-            <td>Met on 11/11</td>
-            
-            <td><span class="tag ok">No alert (met on 11/11)</span></td>
-          </tr>
-          <tr>
-            <td>Permanency review</td>
-            <td>C-1059</td>
-            <td>M. Garcia</td>
-            <td>11/9</td>
-            
-            <td>-3 days</td>
-            <td><span class="tag danger">Flagged overdue</span></td>
-          </tr>
-          <tr>
-            <td>Home visit (Noah K.)</td>
-            <td>C-1088</td>
-            <td>M. Garcia</td>
-            <td>11/8</td>
-            
-            <td>-4 days</td>
-            <td><span class="tag danger">Flagged overdue</span></td>
-          </tr>
-          <tr>
-            <td>Service plan review</td>
-            <td>C-1110</td>
-            <td>T. Becker</td>
-            <td>11/7</td>
-            
-            <td>-5 days</td>
-            <td><span class="tag danger">Flagged overdue</span></td>
-          </tr>
-          <tr>
-            <td>Court report</td>
-            <td>C-1111</td>
-            <td>T. Becker</td>
-            <td>11/10</td>
-            
-            <td>-2 days</td>
-            <td><span class="tag danger">Flagged overdue</span></td>
-          </tr>
-          <tr>
-            <td>Medical exam</td>
-            <td>C-1112</td>
-            <td>T. Becker</td>
-            <td>11/22</td>
-            
-            <td>10 days</td>
-            <td><span class="tag neutral">No alert</span></td>
-          </tr>
-          <tr>
-            <td>Service plan review</td>
-            <td>C-1115</td>
-            <td>P. Shah</td>
-            <td>11/26</td>
-            
-            <td>14 days</td>
-            <td><span class="tag neutral">No alert</span></td>
-          </tr>
-          <tr>
-            <td>Court report</td>
-            <td>C-1120</td>
-            <td>A. Lopez</td>
-            <td>12/2</td>
-            
-            <td>20 days</td>
-            <td><span class="tag neutral">No alert</span></td>
-          </tr>
-          <tr>
-            <td>Service plan review</td>
-            <td>C-1125</td>
-            <td>C. Ward</td>
-            <td>12/12</td>
-            
-            <td>30 days</td>
-            <td><span class="tag neutral">No alert</span></td>
-          </tr>
+          <tr><td>Court report</td><td>C-1042</td><td>M. Garcia</td><td>11/15</td><td>0 days</td><td><span class="tag danger">Alert sent (due today)</span></td></tr>
+          <tr><td>Service plan review</td><td>C-1077</td><td>M. Garcia</td><td>11/16</td><td>1 day</td><td><span class="tag warn">Alert sent</span></td></tr>
+          <tr><td>Medical exam record</td><td>C-1103</td><td>M. Garcia</td><td>11/22</td><td>7 days</td><td><span class="tag info">Alert sent</span></td></tr>
+          <tr><td>School enrollment form</td><td>C-1088</td><td>M. Garcia</td><td>11/20</td><td>5 days</td><td><span class="tag neutral">No alert</span></td></tr>
+          <tr><td>Court report</td><td>C-1066</td><td>D. Lee</td><td>11/22</td><td>Met on 11/14</td><td><span class="tag ok">No alert (met on 11/14)</span></td></tr>
+          <tr><td>Permanency review</td><td>C-1059</td><td>M. Garcia</td><td>11/12</td><td>-3 days</td><td><span class="tag danger">Flagged overdue</span></td></tr>
+          <tr><td>Home visit (Noah K.)</td><td>C-1088</td><td>M. Garcia</td><td>11/11</td><td>-4 days</td><td><span class="tag danger">Flagged overdue</span></td></tr>
+          <tr><td>Service plan review</td><td>C-1110</td><td>T. Becker</td><td>11/10</td><td>-5 days</td><td><span class="tag danger">Flagged overdue</span></td></tr>
+          <tr><td>Court report</td><td>C-1111</td><td>T. Becker</td><td>11/13</td><td>-2 days</td><td><span class="tag danger">Flagged overdue</span></td></tr>
+          <tr><td>Medical exam</td><td>C-1112</td><td>T. Becker</td><td>11/25</td><td>10 days</td><td><span class="tag neutral">No alert</span></td></tr>
+          <tr><td>Service plan review</td><td>C-1115</td><td>P. Shah</td><td>11/29</td><td>14 days</td><td><span class="tag neutral">No alert</span></td></tr>
+          <tr><td>Court report</td><td>C-1120</td><td>A. Lopez</td><td>12/5</td><td>20 days</td><td><span class="tag neutral">No alert</span></td></tr>
+          <tr><td>Service plan review</td><td>C-1125</td><td>C. Ward</td><td>12/15</td><td>30 days</td><td><span class="tag neutral">No alert</span></td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- Alert rules -->
   <div class="card">
     <h2>Alert rules</h2>
     <ul class="rules">
@@ -2258,705 +2007,55 @@
     </ul>
   </div>
 
-  <!-- Run now button -->
-  <form method="post" action="#">
-    
-    <button type="submit" class="btn">Run check now</button>
-  </form>
-
-  
+  <a href="#screen-admin-scheduler-after" class="btn">Run check now</a>
 
 </main>
 <div class="badge">Prototype · synthetic data</div>
 </section>
 
-<section id="s-na-placements">
-<header class="app-header">
-  <div class="inner">
-    <a class="brand" href="#cw-home">Foster Care Tracking</a>
-    <nav class="nav" aria-label="Main">
-      <a href="#cw-home">My Work</a>
-      <a href="#cw-placements"
-         aria-current="page" class=" active">Placements</a>
-      <a href="#cw-cases">Cases</a>
-      <a href="#cw-compliance">Compliance</a>
-    </nav>
-    <div class="user">
-      <span><strong>admin</strong> · <span class="role">Administrator</span></span>
-      <form action="#" method="post" style="display:inline">
-        <button type="submit" style="background:none;border:none;color:#fff;cursor:pointer;font:inherit;text-decoration:underline;padding:0">Sign out</button>
-      </form>
-    </div>
-  </div>
-</header>
-<main>
-
-  <div class="card narrow" style="margin-top:2rem">
-    <div class="alert info" role="note" style="margin-bottom:1rem">
-      <span class="lbl">Note:</span>
-      This section isn't available for the <strong>Administrator</strong> role in this demo.
-    </div>
-    <a class="btn secondary" href="#cw-home">Back to My Work</a>
-  </div>
-
-</main>
-<div class="badge">Prototype · synthetic data</div>
-</section>
-
-<section id="s-cw-alerts">
-<header class="app-header">
-  <div class="inner">
-    <a class="brand" href="#cw-home">Foster Care Tracking</a>
-    <nav class="nav" aria-label="Main">
-      <a href="#cw-home">My Work</a>
-      <a href="#cw-placements">Placements</a>
-      <a href="#cw-cases">Cases</a>
-      <a href="#cw-compliance"
-         aria-current="page" class=" active">Compliance</a>
-    </nav>
-    <div class="user">
-      <span><strong>m.garcia</strong> · <span class="role">Caseworker</span></span>
-      <form action="#" method="post" style="display:inline">
-        <button type="submit" style="background:none;border:none;color:#fff;cursor:pointer;font:inherit;text-decoration:underline;padding:0">Sign out</button>
-      </form>
-    </div>
-  </div>
-</header>
-<main>
-
-  <h1>Compliance</h1>
-  <p class="small">Thursday, 11/12/2026</p>
-
-  <!-- ── Deadline alerts ──────────────────────────────────────────────────── -->
-  <div class="card">
-    <div class="row spread">
-      <h2 style="margin:0">Deadline alerts (3)</h2>
-      <span class="small">In-system alerts only &middot; no email or push</span>
-    </div>
-    <p class="small" style="margin-top:.25rem">
-      Sent by ComplianceScheduler &middot;
-      <span>11/12/2026 11:26 PM CT</span>
-    </p>
-
-    <ul class="alist">
-      <li class="aitem  info">
-        <div>
-          <div class="t">Medical exam record – C-1103</div>
-          <div class="small">Due 11/19/2026</div>
-        </div>
-        
-        
-        <span class="tag info">7 days</span>
-        
-      </li>
-      <li class="aitem  warn">
-        <div>
-          <div class="t">Service plan review – C-1077</div>
-          <div class="small">Due 11/13/2026</div>
-        </div>
-        
-        <span class="tag warn">1 day</span>
-        
-        
-      </li>
-      <li class="aitem  danger">
-        <div>
-          <div class="t">Court report – C-1042</div>
-          <div class="small">Due 11/12/2026</div>
-        </div>
-        <span class="tag danger">Due today</span>
-        
-        
-        
-      </li>
-    </ul>
-
-    
-
-    <!-- Flagged overdue -->
-    <div style="margin-top:.75rem">
-      <div class="small" style="margin-bottom:.25rem">Flagged overdue (no reminder sent):</div>
-      <ul class="alist">
-        <li class="aitem danger">
-          <div>
-            <div class="t">Permanency review – C-1059</div>
-            <div class="small">Due 11/9/2026</div>
-          </div>
-          <span class="tag danger">Overdue 3 days</span>
-        </li>
-        <li class="aitem danger">
-          <div>
-            <div class="t">Home visit (Noah K.) – C-1088</div>
-            <div class="small">Due 11/8/2026</div>
-          </div>
-          <span class="tag danger">Overdue 4 days</span>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  
-
-  <!-- ── My visits ────────────────────────────────────────────────────────── -->
-  <div class="card">
-    <h2>My visits</h2>
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead>
-          <tr><th>Date</th><th>Child</th><th>Case</th><th>Visit</th><th>Status</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>9/18</td>
-            <td>Eli M.</td>
-            <td>C-1059</td>
-            <td>Home visit</td>
-            <td>
-              
-              
-              
-              <span class="tag ok">Completed</span>
-            </td>
-          </tr>
-          <tr>
-            <td>9/8</td>
-            <td>Noah K.</td>
-            <td>C-1088</td>
-            <td>Home visit</td>
-            <td>
-              
-              
-              
-              <span class="tag ok">Completed</span>
-            </td>
-          </tr>
-          <tr>
-            <td>10/13</td>
-            <td>Jordan P.</td>
-            <td>C-1042</td>
-            <td>Home visit</td>
-            <td>
-              
-              
-              
-              <span class="tag ok">Completed</span>
-            </td>
-          </tr>
-          <tr>
-            <td>10/23</td>
-            <td>Liam T.</td>
-            <td>C-1077</td>
-            <td>School visit</td>
-            <td>
-              
-              
-              
-              <span class="tag ok">Completed</span>
-            </td>
-          </tr>
-          <tr>
-            <td>11/5</td>
-            <td>Mia S.</td>
-            <td>C-1103</td>
-            <td>Home visit</td>
-            <td>
-              
-              
-              
-              <span class="tag ok">Completed</span>
-            </td>
-          </tr>
-          <tr>
-            <td>11/8</td>
-            <td>Noah K.</td>
-            <td>C-1088</td>
-            <td>Home visit</td>
-            <td>
-              <span class="tag danger">Overdue</span>
-              
-              
-              
-            </td>
-          </tr>
-          <tr>
-            <td>11/11</td>
-            <td>Ava R.</td>
-            <td>C-1092</td>
-            <td>School visit</td>
-            <td>
-              
-              <span class="tag danger">Missed</span>
-              
-              
-            </td>
-          </tr>
-          <tr>
-            <td>11/14</td>
-            <td>Jordan P.</td>
-            <td>C-1042</td>
-            <td>Home visit</td>
-            <td>
-              
-              
-              <span class="tag info">Scheduled</span>
-              
-            </td>
-          </tr>
-          <tr>
-            <td>11/18</td>
-            <td>Liam T.</td>
-            <td>C-1077</td>
-            <td>Home visit</td>
-            <td>
-              
-              
-              <span class="tag info">Scheduled</span>
-              
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-</main>
-<div class="badge">Prototype · synthetic data</div>
-</section>
-
-<section id="s-dashboard">
-<header class="app-header">
-  <div class="inner">
-    <a class="brand" href="#cw-home">Foster Care Tracking</a>
-    <nav class="nav" aria-label="Main">
-      <a href="#cw-home">My Work</a>
-      <a href="#cw-placements">Placements</a>
-      <a href="#cw-cases">Cases</a>
-      <a href="#cw-compliance"
-         aria-current="page" class=" active">Compliance</a>
-    </nav>
-    <div class="user">
-      <span><strong>k.brown</strong> · <span class="role">Supervisor</span></span>
-      <form action="#" method="post" style="display:inline">
-        <button type="submit" style="background:none;border:none;color:#fff;cursor:pointer;font:inherit;text-decoration:underline;padding:0">Sign out</button>
-      </form>
-    </div>
-  </div>
-</header>
-<main>
-
-  <div class="row spread" style="align-items:flex-end;margin-bottom:1rem">
-    <div>
-      <h1>Compliance dashboard</h1>
-      <div class="small">Visits and deadlines · all caseworkers</div>
-      
-    </div>
-    <div class="filter">
-      <label for="cwFilter">Filter:</label>
-      <select class="select" id="cwFilter"
-              onchange="location.href='/supervisor/dashboard' + (this.value ? '?caseworker=' + this.value : '')">
-        <option value="" selected="selected">All caseworkers</option>
-        <option value="m.garcia">Maria Garcia</option>
-        <option value="d.lee">David Lee</option>
-        <option value="p.shah">Priya Shah</option>
-        <option value="t.becker">Tom Becker</option>
-        <option value="a.lopez">Ana Lopez</option>
-        <option value="c.ward">Chris Ward</option>
-      </select>
-    </div>
-  </div>
-
-  <!-- ── OVERALL VIEW ───────────────────────────────────────────────────────── -->
-  
-
-    <div class="stats">
-      <div class="stat">
-        <div class="k">On track</div>
-        <div class="n">77.8%</div>
-        <div class="small">21 of 27 items</div>
-        <span class="tag ok">On track</span>
-      </div>
-      <div class="stat">
-        <div class="k">Overdue</div>
-        <div class="n">22.2%</div>
-        <div class="small">6 items</div>
-        <span class="tag danger">Overdue</span>
-      </div>
-      <div class="stat">
-        <div class="k">Due in 7 days</div>
-        <div class="n">4</div>
-        <div class="small">items</div>
-        <span class="tag info">Upcoming</span>
-      </div>
-      <div class="stat">
-        <div class="k">Missed visits (30 days)</div>
-        <div class="n">1</div>
-        <div class="small">visits</div>
-        <span class="tag danger">Missed</span>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>On track vs. overdue</h2>
-      <div class="split"
-           role="img" aria-label="77.8 percent on track, 22.2 percent overdue">
-        <span class="a" style="width:77.77777777777777%"></span>
-        <span class="b" style="width:22.2%"></span>
-      </div>
-      <div class="row small">
-        <span><span class="tag ok">On track</span>
-              <span>77.8% (21)</span></span>
-        <span><span class="tag danger">Overdue</span>
-              <span>22.2% (6)</span></span>
-      </div>
-      <p class="small" style="margin-bottom:0"><code class="m">ComplianceScheduler.calculateOnTrackRate()</code></p>
-    </div>
-
-    <div class="card">
-      <h2>By caseworker</h2>
-      <div class="tbl-wrap">
-        <table class="tbl">
-          <thead><tr><th>Caseworker</th><th>Cases</th><th>On-track rate</th><th>Overdue items</th></tr></thead>
-          <tbody>
-            <tr>
-              <td>
-                <a href="#dashboard-maria">Maria Garcia</a>
-              </td>
-              <td>6</td>
-              <td>
-                <div class="rate">
-                  <div class="bar warn" role="img" aria-label="78.6 percent">
-                    <span style="width:78.6%"></span>
-                  </div>
-                  <strong>78.6%</strong>
-                  <span class="tag warn">Needs attention</span>
-                </div>
-              </td>
-              <td>3</td>
-            </tr>
-            <tr>
-              <td>
-                <a href="/supervisor/dashboard?caseworker=d.lee">David Lee</a>
-              </td>
-              <td>1</td>
-              <td>
-                <div class="rate">
-                  <div class="bar ok" role="img" aria-label="100.0 percent">
-                    <span style="width:100.0%"></span>
-                  </div>
-                  <strong>100.0%</strong>
-                  <span class="tag ok">On target</span>
-                </div>
-              </td>
-              <td>0</td>
-            </tr>
-            <tr>
-              <td>
-                <a href="/supervisor/dashboard?caseworker=p.shah">Priya Shah</a>
-              </td>
-              <td>1</td>
-              <td>
-                <div class="rate">
-                  <div class="bar ok" role="img" aria-label="100.0 percent">
-                    <span style="width:100.0%"></span>
-                  </div>
-                  <strong>100.0%</strong>
-                  <span class="tag ok">On target</span>
-                </div>
-              </td>
-              <td>0</td>
-            </tr>
-            <tr>
-              <td>
-                <a href="/supervisor/dashboard?caseworker=t.becker">Tom Becker</a>
-              </td>
-              <td>3</td>
-              <td>
-                <div class="rate">
-                  <div class="bar danger" role="img" aria-label="40.0 percent">
-                    <span style="width:40.0%"></span>
-                  </div>
-                  <strong>40.0%</strong>
-                  <span class="tag danger">Below target</span>
-                </div>
-              </td>
-              <td>3</td>
-            </tr>
-            <tr>
-              <td>
-                <a href="/supervisor/dashboard?caseworker=a.lopez">Ana Lopez</a>
-              </td>
-              <td>1</td>
-              <td>
-                <div class="rate">
-                  <div class="bar ok" role="img" aria-label="100.0 percent">
-                    <span style="width:100.0%"></span>
-                  </div>
-                  <strong>100.0%</strong>
-                  <span class="tag ok">On target</span>
-                </div>
-              </td>
-              <td>0</td>
-            </tr>
-            <tr>
-              <td>
-                <a href="/supervisor/dashboard?caseworker=c.ward">Chris Ward</a>
-              </td>
-              <td>1</td>
-              <td>
-                <div class="rate">
-                  <div class="bar ok" role="img" aria-label="100.0 percent">
-                    <span style="width:100.0%"></span>
-                  </div>
-                  <strong>100.0%</strong>
-                  <span class="tag ok">On target</span>
-                </div>
-              </td>
-              <td>0</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="legend">
-        <span class="tag ok">On target: 90% or more</span>
-        <span class="tag warn">Needs attention: 70–89%</span>
-        <span class="tag danger">Below target: under 70%</span>
-      </div>
-    </div>
-  
-
-  <!-- ── FILTERED VIEW ─────────────────────────────────────────────────────── -->
-  
-
-</main>
-<div class="badge">Prototype · synthetic data</div>
-</section>
-
-<section id="s-dashboard-maria">
-<header class="app-header">
-  <div class="inner">
-    <a class="brand" href="#cw-home">Foster Care Tracking</a>
-    <nav class="nav" aria-label="Main">
-      <a href="#cw-home">My Work</a>
-      <a href="#cw-placements">Placements</a>
-      <a href="#cw-cases">Cases</a>
-      <a href="#cw-compliance"
-         aria-current="page" class=" active">Compliance</a>
-    </nav>
-    <div class="user">
-      <span><strong>k.brown</strong> · <span class="role">Supervisor</span></span>
-      <form action="#" method="post" style="display:inline">
-        <button type="submit" style="background:none;border:none;color:#fff;cursor:pointer;font:inherit;text-decoration:underline;padding:0">Sign out</button>
-      </form>
-    </div>
-  </div>
-</header>
-<main>
-
-  <div class="row spread" style="align-items:flex-end;margin-bottom:1rem">
-    <div>
-      <h1>Compliance dashboard</h1>
-      
-      <div class="small">
-        Filtered: <span>Maria Garcia</span>
-        &middot; <code class="m">filterByCaseworker()</code>
-        &middot; <a href="#dashboard">Clear filter</a>
-      </div>
-    </div>
-    <div class="filter">
-      <label for="cwFilter">Filter:</label>
-      <select class="select" id="cwFilter"
-              onchange="location.href='/supervisor/dashboard' + (this.value ? '?caseworker=' + this.value : '')">
-        <option value="">All caseworkers</option>
-        <option value="m.garcia"
-                selected="selected">Maria Garcia</option>
-        <option value="d.lee">David Lee</option>
-        <option value="p.shah">Priya Shah</option>
-        <option value="t.becker">Tom Becker</option>
-        <option value="a.lopez">Ana Lopez</option>
-        <option value="c.ward">Chris Ward</option>
-      </select>
-    </div>
-  </div>
-
-  <!-- ── OVERALL VIEW ───────────────────────────────────────────────────────── -->
-  
-
-  <!-- ── FILTERED VIEW ─────────────────────────────────────────────────────── -->
-  
-
-    <div class="stats">
-      <div class="stat">
-        <div class="k">On track</div>
-        <div class="n">78.6%</div>
-        <div class="small">4 of 6 items (est.)</div>
-        <span class="tag warn">Needs attention (70–89%)</span>
-      </div>
-      <div class="stat">
-        <div class="k">Overdue items</div>
-        <div class="n">3</div>
-        <div class="small">items</div>
-        <span class="tag danger">Overdue</span>
-      </div>
-      <div class="stat">
-        <div class="k">Cases</div>
-        <div class="n">6</div>
-        <div class="small">open cases</div>
-        <span class="tag neutral">Assigned</span>
-      </div>
-      <div class="stat">
-        <div class="k">Missed visits (30 days)</div>
-        <div class="n">1</div>
-        <div class="small">visit</div>
-        <span class="tag danger">Missed</span>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>On-track rate</h2>
-      <div class="rate">
-        <div class="bar warn" role="img" style="width:100%;max-width:420px" aria-label="78.6 percent">
-          <span style="width:78.57142857142857%"></span>
-        </div>
-        <strong>78.6%</strong>
-        <span class="tag warn">Needs attention (70–89%)</span>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>Overdue items (3)</h2>
-      <ul class="alist">
-        <li class="aitem danger">
-          <div>
-            <div class="t">Permanency review – C-1059</div>
-            <div class="small">Due 11/9/2026</div>
-          </div>
-          <span class="tag danger">Overdue 3 days</span>
-        </li>
-        <li class="aitem danger">
-          <div>
-            <div class="t">Home visit – Noah K. (C-1088)</div>
-            <div class="small">Scheduled 11/8/2026</div>
-          </div>
-          <span class="tag danger">Overdue since 11/8</span>
-        </li>
-        <li class="aitem danger">
-          <div>
-            <div class="t">School visit – Ava R. (C-1092)</div>
-            <div class="small">Scheduled 11/11/2026</div>
-          </div>
-          <span class="tag danger">Missed</span>
-        </li>
-      </ul>
-    </div>
-
-    
-
-  
-
-</main>
-<div class="badge">Prototype · synthetic data</div>
-</section>
-
-<section id="s-na-cases">
-<header class="app-header">
-  <div class="inner">
-    <a class="brand" href="#cw-home">Foster Care Tracking</a>
-    <nav class="nav" aria-label="Main">
-      <a href="#cw-home">My Work</a>
-      <a href="#cw-placements">Placements</a>
-      <a href="#cw-cases"
-         aria-current="page" class=" active">Cases</a>
-      <a href="#cw-compliance">Compliance</a>
-    </nav>
-    <div class="user">
-      <span><strong>k.brown</strong> · <span class="role">Supervisor</span></span>
-      <form action="#" method="post" style="display:inline">
-        <button type="submit" style="background:none;border:none;color:#fff;cursor:pointer;font:inherit;text-decoration:underline;padding:0">Sign out</button>
-      </form>
-    </div>
-  </div>
-</header>
-<main>
-
-  <div class="card narrow" style="margin-top:2rem">
-    <div class="alert info" role="note" style="margin-bottom:1rem">
-      <span class="lbl">Note:</span>
-      This section isn't available for the <strong>Supervisor</strong> role in this demo.
-    </div>
-    <a class="btn secondary" href="#cw-home">Back to My Work</a>
-  </div>
-
-</main>
-<div class="badge">Prototype · synthetic data</div>
-</section>
+<!-- ── Hash router ── -->
 <script>
 (function () {
-  var DEFAULT = 's-login';
+  var DEFAULT = '#screen-login';
+
   function show(hash) {
-    var id = hash ? 's-' + hash.replace(/^#/, '') : DEFAULT;
-    var target = document.getElementById(id);
-    if (!target) { target = document.getElementById(DEFAULT); }
-    document.querySelectorAll('section[id^="s-"]').forEach(function(s){ s.classList.remove('active'); });
-    if (target) target.classList.add('active');
+    // Update proto-nav active link
+    document.querySelectorAll('#proto-nav a').forEach(function (a) {
+      a.classList.toggle('active', a.getAttribute('href') === hash);
+    });
+
+    // Show matching section, hide others
+    var found = false;
+    document.querySelectorAll('.proto-screen').forEach(function (sec) {
+      var active = ('#' + sec.id) === hash;
+      sec.classList.toggle('active', active);
+      if (active) found = true;
+    });
+
+    // If no match, fall back to default
+    if (!found && hash !== DEFAULT) {
+      location.hash = DEFAULT;
+    }
+
+    // Scroll to top
+    window.scrollTo(0, 0);
   }
 
-  /* intercept all in-page anchor clicks */
-  document.addEventListener('click', function(e) {
-    var a = e.target.closest('a[href^="#"]');
-    if (a) {
-      e.preventDefault();
-      var hash = a.getAttribute('href');
-      history.pushState(null, '', hash);
-      show(hash);
-    }
-
-    /* logout buttons / links */
-    var btn = e.target.closest('button[type="submit"]');
-    if (btn) {
-      var form = btn.closest('form');
-      if (form && form.getAttribute('action') === '#') {
-        e.preventDefault();
-        /* determine screen by which section this form lives in */
-        var sec = btn.closest('section[id^="s-"]');
-        var sid = sec ? sec.id : '';
-        /* login form */
-        if (sid === 's-login') {
-          var user = form.querySelector('[name="username"]').value;
-          var pw   = form.querySelector('[name="password"]').value;
-          if (pw === 'demo') {
-            if (user === 'm.garcia')  { history.pushState(null,'','#cw-home');  show('#cw-home');  return; }
-            if (user === 'k.brown')   { history.pushState(null,'','#dashboard'); show('#dashboard'); return; }
-            if (user === 'admin')     { history.pushState(null,'','#scheduler'); show('#scheduler'); return; }
-          }
-          history.pushState(null,'','#login-error'); show('#login-error'); return;
-        }
-        /* end-placement form */
-        if (sid === 's-end' || sid === 's-end-error') {
-          var reason = (form.querySelector('[name="reason"]') || {}).value || '';
-          if (!reason.trim()) { history.pushState(null,'','#end-error'); show('#end-error'); return; }
-          history.pushState(null,'','#ended'); show('#ended'); return;
-        }
-        /* new-placement form */
-        if (sid === 's-select-home') {
-          var sel = form.querySelector('input[name="homeId"]:checked') || form.querySelector('select[name="homeId"]');
-          var hid = sel ? sel.value : '';
-          var RIVERA_ID = '4';
-          if (hid === RIVERA_ID) { history.pushState(null,'','#rejected'); show('#rejected'); return; }
-          history.pushState(null,'','#saved'); show('#saved'); return;
-        }
-        /* run-check form → scheduler-run */
-        if (sid === 's-scheduler') {
-          history.pushState(null,'','#scheduler-run'); show('#scheduler-run'); return;
-        }
-        /* logout → login */
-        history.pushState(null,'','#login'); show('#login'); return;
-      }
-    }
+  window.addEventListener('hashchange', function () {
+    show(location.hash);
   });
 
-  window.addEventListener('popstate', function(){ show(location.hash); });
-  show(location.hash);
-})();
+  // On load
+  var initial = location.hash || DEFAULT;
+  if (!initial.startsWith('#screen-')) {
+    initial = DEFAULT;
+  }
+  show(initial);
+  if (!location.hash) {
+    location.hash = DEFAULT;
+  }
+}());
 </script>
+
 </body>
 </html>

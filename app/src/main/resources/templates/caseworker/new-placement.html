@@ -11,6 +11,7 @@
                 th:text="${caseRecord.id}">C-XXXX</a>
     &rsaquo; New placement
   </div>
+  <p class="eyebrow">CASEWORKER &middot; NEW PLACEMENT</p>
   <h1>New placement – select foster home</h1>
 
   <!-- Rejection alert (flash) -->
@@ -57,7 +58,7 @@
           <span>
             <!-- Show "Selected" badge for the rejected home -->
             <span th:if="${rejectedHomeId != null and rejectedHomeId == h.id}"
-                  class="tag info" style="color:var(--teal-dark);background:var(--info-bg)">
+                  class="tag info"
               Selected
             </span>
             <span th:if="${h.full}" class="tag danger">Full</span>
