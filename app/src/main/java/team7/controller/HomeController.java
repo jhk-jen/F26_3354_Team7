@@ -8,6 +8,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class HomeController extends ControllerSupport {
 
+    /** Redirect / to login (unauthenticated) or /my-work (authenticated). */
+    @GetMapping("/")
+    public String root() {
+        return "redirect:/my-work";
+    }
+
     /** Redirect to role-appropriate home page. */
     @GetMapping("/home")
     public String home(Authentication auth, Model model) {

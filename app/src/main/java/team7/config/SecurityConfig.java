@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .frameOptions(frame -> frame.sameOrigin())
             )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/css/**", "/js/**").permitAll()
+                .requestMatchers("/login", "/css/**", "/fonts/**", "/js/**").permitAll()
                 .requestMatchers("/h2-console/**").hasRole("ADMINISTRATOR")
                 // UC-2: Caseworker only
                 .requestMatchers("/caseworker/**").hasRole("CASEWORKER")
