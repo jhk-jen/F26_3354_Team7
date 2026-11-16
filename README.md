@@ -156,13 +156,6 @@ To repeat a scenario from the beginning, stop the app (`Ctrl+C`) and run it agai
 
 ---
 
-## For developers
-
-See [docs/UC5_DEVELOPER_GUIDE.md](docs/UC5_DEVELOPER_GUIDE.md) for a detailed walkthrough of the
-UC-5 compliance monitoring implementation (data model, service logic, endpoints, templates, and tests).
-
----
-
 ## Deliverables
 
 - Final report: [docs/Team\_07\_SE3354\_F26\_Final\_Project%20Report.pdf](docs/Team_07_SE3354_F26_Final_Project%20Report.pdf)
